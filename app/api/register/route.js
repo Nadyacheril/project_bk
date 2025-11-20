@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import connection from "@/lib/database";
+import connection from "../../../lib/database";
+
 import { registerSchema } from "@/lib/zodSchemas";
 
 export async function POST(req) {

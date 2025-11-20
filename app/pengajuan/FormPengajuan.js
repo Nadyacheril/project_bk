@@ -1,78 +1,100 @@
 "use client";
 import { useState } from "react";
 
-export default function FormPengajuan({ guruList, pengajuanList, siswaNama, siswaId }) {
+export default function FormPengajuan({ user, guruList, onSubmit }) {
+  const [kelas, setKelas] = useState("");
+  const [topik, setTopik] = useState("");
+  const [jam, setJam] = useState("");
+  const [guruId, setGuruId] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(e) {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    const formData = new FormData(e.target);
-    const res = await fetch("/api/pengajuan/submit", {
-      method: "POST",
-      body: formData,
-    });
-    if (res.ok) {
-      alert("Pengajuan terkirim!");
-      window.location.reload();
+    if (!guruId || !kelas || !topik || !jam) {
+      alert("Semua field harus diisi");
+      return;
     }
+    setLoading(true);
+    await onSubmit({ guruId, siswaId: user.id, kelas_siswa: kelas, topik, jam });
     setLoading(false);
-  }
-
-  async function handleDelete(id) {
-    if (!confirm("Hapus pengajuan?")) return;
-    const formData = new FormData();
-    formData.append("id", id);
-    await fetch("/api/pengajuan/delete", { method: "POST", body: formData });
-    window.location.reload();
-  }
+    setKelas("");
+    setTopik("");
+    setJam("");
+    setGuruId("");
+  };
 
   return (
-    <div className="max-w-3xl mx-auto px-4">
-      {/* ... form sama seperti sebelumnya ... */}
+    <form onSubmit={handleSubmit} className="max-w-md mx-auto p-4 border rounded">
+      <h2 className="text-xl font-semibold mb-4">Form Pengajuan Konseling</h2>
 
-      <table className="w-full text-sm border-collapse mt-10">
-        <thead className="bg-blue-200">
-          <tr>
-            
-            <th className="border p-2">Kelas</th>
-            <th className="border p-2">Guru</th>
-            <th className="border p-2">Topik</th>
-            <th className="border p-2">Tanggal</th>
-            <th className="border p-2">Status</th>
-            <th className="border p-2">Aksi</th>
-          </tr>
-        </thead>
-        <tbody>
-          {pengajuanList.map(p => (
-            <tr key={p.id}>
-              <td className="border p-2">{siswaNama}</td>
-              <td className="border p-2">{p.kelas_siswa}</td>
-              <td className="border p-2">{p.nama_guru}</td>
-              <td className="border p-2">{p.topik}</td>
-              <td className="border p-2">{new Date(p.tanggal).toLocaleDateString("id-ID")}</td>
-              <td className="border p-2">
-                <span className={`px-2 py-1 text-xs rounded-full
-                  ${p.status === 'diterima' ? 'bg-green-100 text-green-800' :
-                    p.status === 'ditolak' ? 'bg-red-100 text-red-800' :
-                    'bg-yellow-100 text-yellow-800'}`}>
-                  {p.status}
-                </span>
-              </td>
-              <td className="border p-2 text-center">
-                {p.status === "menunggu" && (
-                  <button
-                    onClick={() => handleDelete(p.id)}
-                    className="bg-red-500 text-white px-3 py-1 rounded text-xs"
-                  >
-                    Remove
-                  </button>
-                )}
-              </td>
-            </tr>
+      <label className="block mb-2">
+        Pilih Guru:
+        <select
+          value={guruId}
+          onChange={(e) => setGuruId(e.target.value)}
+          className="w-full border p-2 rounded mt-1"
+          required
+        >
+          <option value="">--Pilih Guru--</option>
+          {guruList.map((g) => (
+            <option key={g.id} value={g.id}>
+              {g.nama} ({g.mapel})
+            </option>
           ))}
-        </tbody>
-      </table>
-    </div>
+        </select>
+      </label>
+
+      <label className="block mb-2">
+        Kelas:
+        <input
+          type="text"
+          value={kelas}
+          onChange={(e) => setKelas(e.target.value)}
+          className="w-full border p-2 rounded mt-1"
+          placeholder="contoh: X-IPA 3"
+          required
+        />
+      </label>
+
+      <label className="block mb-2">
+        Topik:
+        <select
+          value={topik}
+          onChange={(e) => setTopik(e.target.value)}
+          className="w-full border p-2 rounded mt-1"
+          required
+        >
+          <option value="">--Pilih Topik--</option>
+          <option value="Akademik">Akademik</option>
+          <option value="Pribadi">Pribadi</option>
+          <option value="Karir">Karir</option>
+          <option value="Sosial">Sosial</option>
+        </select>
+      </label>
+
+      <label className="block mb-2">
+        Jam:
+        <select
+          value={jam}
+          onChange={(e) => setJam(e.target.value)}
+          className="w-full border p-2 rounded mt-1"
+          required
+        >
+          <option value="">--Pilih Jam--</option>
+          <option value="08:00-09:00">08:00-09:00</option>
+          <option value="09:00-10:00">09:00-10:00</option>
+          <option value="10:00-11:00">10:00-11:00</option>
+          <option value="13:00-14:00">13:00-14:00</option>
+        </select>
+      </label>
+
+      <button
+        type="submit"
+        disabled={loading}
+        className="bg-blue-600 text-white px-4 py-2 rounded mt-2"
+      >
+        {loading ? "Mengirim..." : "Kirim Pengajuan"}
+      </button>
+    </form>
   );
 }

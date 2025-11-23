@@ -1,20 +1,33 @@
-import { query } from "@/lib/database";
+import { NextResponse } from "next/server";
+import connection from "@/lib/database";
 
 export async function POST(req) {
   try {
-    const { guruId, siswaId, nama_siswa, kelas_siswa, topik, jam } = await req.json();
+    const { guruId, userId, kelas_siswa, topik, jam } = await req.json();
 
-    if (!guruId || !siswaId || !nama_siswa) {
-      return new Response(JSON.stringify({ error: "Data tidak lengkap" }), { status: 400 });
+    if (!guruId || !userId || !kelas_siswa || !topik || !jam) {
+      return NextResponse.json({ error: "Lengkapi semua field!" }, { status: 400 });
     }
 
-    const result = await query(
-      "INSERT INTO pengajuan (guru_id, siswa_id, nama_siswa, kelas_siswa, topik, jam) VALUES (?, ?, ?, ?, ?, ?)",
-      [guruId, siswaId, nama_siswa, kelas_siswa, topik, jam]
+    // API ini pintar → otomatis cari siswaId & nama dari userId
+    const [siswa] = await connection.execute(
+      "SELECT id, nama FROM siswa WHERE user_id = ?",
+      [userId]
     );
 
-    return new Response(JSON.stringify({ success: true, id: result.insertId }), { status: 200 });
-  } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), { status: 500 });
+    if (siswa.length === 0) {
+      return NextResponse.json({ error: "Siswa tidak ditemukan" }, { status: 404 });
+    }
+
+    await connection.execute(
+      `INSERT INTO pengajuan (id_guru, id_siswa, nama_siswa, kelas_siswa, topik, jam)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [guruId, siswa[0].id, siswa[0].nama, kelas_siswa, topik, jam]
+    );
+
+    return NextResponse.json({ success: true, message: "Pengajuan berhasil!" });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: "Gagal mengirim" }, { status: 500 });
   }
 }

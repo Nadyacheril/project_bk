@@ -8,10 +8,10 @@ export default function MainPage({ user }) {
   const router = useRouter();
 
   const guruList = [
-    { id: 1, nama: "BU CACA", foto: "/guru/bucaca.jpg", pengalaman: "10 tahun", mapel: "BK" },
-    { id: 2, nama: "Bu Heni", foto: "/guru/buheni.jpg", pengalaman: "8 tahun", mapel: "BK" },
-    { id: 3, nama: "Pak Fika", foto: "/guru/bufika.jpg", pengalaman: "5 tahun", mapel: "BK" },
-    { id: 4, nama: "Bu Nadia", foto: "/guru/bunadia.jpg", pengalaman: "12 tahun", mapel: "BK" },
+    { id: 1, nama: "Kasandra Fitriani.N S.Pd", foto: "/guru/bucaca.jpg", pengalaman: "10 tahun", mapel: "Bimbingan Konseling" },
+    { id: 2, nama: "Heni Siswati S.Psi", foto: "/guru/buheni.jpg", pengalaman: "8 tahun", mapel: "Bimbingan Konseling" },
+    { id: 3, nama: "Ika Rafika S.Pd", foto: "/guru/bufika.jpg", pengalaman: "5 tahun", mapel: "Bimbingan Konseling" },
+    { id: 4, nama: "Nadya Afriliani Ariesta S.Pd", foto: "/guru/bunadia.jpg", pengalaman: "12 tahun", mapel: "Bimbingan Konseling" },
   ];
 
   const [selectedGuru, setSelectedGuru] = useState(null);

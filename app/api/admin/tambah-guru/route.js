@@ -1,34 +1,36 @@
-import db from "@/lib/database";
-import bcrypt from "bcryptjs";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+// import { NextResponse } from "next/server";
+// import bcrypt from "bcryptjs";
+// import connection from "@/lib/database";
 
+// export async function POST(req) {
+//   const { nama, email, password, foto } = await req.json();
 
-export async function POST(req) {
-  const session = await getServerSession(authOptions);
-  if (!session || session.user.role !== "admin") {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
-  }
+//   if (!nama || !email || !password || !foto) {
+//     return NextResponse.json({ error: "Semua field wajib diisi!" }, { status: 400 });
+//   }
 
-  const { nama, email, nip } = await req.json();
-  const plainPassword = `guru${nip.slice(-4)}`;
-  const hashedPassword = await bcrypt.hash(plainPassword, 10);
+//   try {
+//     const hash = await bcrypt.hash(password, 12);
 
-  try {
-    const [result] = await db.query(
-      "INSERT INTO users (email, password, role) VALUES (?, ?, 'guru')",
-      [email, hashedPassword]
-    );
+//     // 1. Insert ke users (role: guru)
+//     const [userResult] = await connection.execute(
+//       "INSERT INTO users (email, password, role) VALUES (?, ?, 'guru')",
+//       [email, hash]
+//     );
+//     const userId = userResult.insertId;
 
-    await db.query(
-      "INSERT INTO guru (user_id, nama, nip) VALUES (?, ?, ?)",
-      [result.insertId, nama, nip]
-    );
+//     // 2. Insert ke guru (dengan foto!)
+//     await connection.execute(
+//       "INSERT INTO guru (user_id, nama, foto) VALUES (?, ?, ?)",
+//       [userId, nama, foto]
+//     );
 
-    await sendTeacherEmail({ nama, email, password: plainPassword });
-
-    return new Response(JSON.stringify({ success: true }), { status: 200 });
-  } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), { status: 500 });
-  }
-}
+//     return NextResponse.json({ success: true });
+//   } catch (err) {
+//     console.error(err);
+//     if (err.code === "ER_DUP_ENTRY") {
+//       return NextResponse.json({ error: "Email sudah digunakan!" }, { status: 400 });
+//     }
+//     return NextResponse.json({ error: "Gagal menambahkan guru" }, { status: 500 });
+//   }
+// }

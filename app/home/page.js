@@ -14,6 +14,7 @@ export default function HomePage() {
   const [topik, setTopik] = useState("");
   const [jam, setJam] = useState("");
   const [loading, setLoading] = useState(false);
+  const [tanggal, setTanggal] = useState("");
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -60,17 +61,18 @@ export default function HomePage() {
 
     // SEKARANG KIRIM PENGAJUAN
     const res = await fetch("/api/pengajuan", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        guruId: selectedGuru.id,
-        siswaId: profileData.siswaId,        // INI YANG BENAR
-        nama_siswa: userData.nama || userData.email.split("@")[0],
-        kelas_siswa: kelas,
-        topik,
-        jam,
-      }),
-    });
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    guruId: selectedGuru.id,
+    userId: userData.id,               // ⬅️ harus userId
+    kelas_siswa: kelas,
+    topik,
+    jam,
+    tanggal,
+  }),
+});
+
 
     const data = await res.json();
     if (res.ok) {
@@ -134,26 +136,69 @@ export default function HomePage() {
               <button onClick={() => setShowForm(true)} className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-lg">Ajukan Konseling</button>
             ) : (
               <form onSubmit={handlePengajuan} className="space-y-4">
-                <input placeholder="Kelas" value={kelas} onChange={e => setKelas(e.target.value)} required className="w-full border-2 border-gray-300 rounded-lg px-4 py-3" />
-                <select value={topik} onChange={e => setTopik(e.target.value)} required className="w-full border-2 border-gray-300 rounded-lg px-4 py-3">
-                  <option value="">Pilih Topik</option>
-                  <option>Akademik</option><option>Pribadi</option><option>Karir</option><option>Sosial</option>
-                </select>
-                <select value={jam} onChange={e => setJam(e.target.value)} required className="w-full border-2 border-gray-300 rounded-lg px-4 py-3">
-                  <option value="">Pilih Jadwal</option>
-                  <option>Senin 08:00-09:00</option>
-                  <option>Selasa 09:00-10:00</option>
-                  <option>Rabu 10:00-11:00</option>
-                  <option>Kamis 13:00-14:00</option>
-                </select>
-                <button type="submit" disabled={loading} className="w-full bg-green-600 text-white py-4 rounded-xl font-bold">
-                  {loading ? "Mengirim..." : "Kirim Pengajuan"}
-                </button>
-              </form>
+
+  {/* KELAS */}
+  <input
+    placeholder="Kelas"
+    value={kelas}
+    onChange={(e) => setKelas(e.target.value)}
+    required
+    className="w-full border-2 border-gray-300 rounded-lg px-4 py-3"
+  />
+
+  {/* TANGGAL ⬅️ TAMBAHKAN DI SINI */}
+  <input
+    type="date"
+    value={tanggal}
+    onChange={(e) => setTanggal(e.target.value)}
+    required
+    className="w-full border-2 border-gray-300 rounded-lg px-4 py-3"
+  />
+
+  {/* TOPIK */}
+  <select
+    value={topik}
+    onChange={(e) => setTopik(e.target.value)}
+    required
+    className="w-full border-2 border-gray-300 rounded-lg px-4 py-3"
+  >
+    <option value="">Pilih Topik</option>
+    <option>Akademik</option>
+    <option>Pribadi</option>
+    <option>Karir</option>
+    <option>Sosial</option>
+  </select>
+
+  {/* JAM */}
+  <select
+    value={jam}
+    onChange={(e) => setJam(e.target.value)}
+    required
+    className="w-full border-2 border-gray-300 rounded-lg px-4 py-3"
+  >
+    <option value="">Pilih Jadwal</option>
+    <option>Senin 08:00-09:00</option>
+    <option>Selasa 09:00-10:00</option>
+    <option>Rabu 10:00-11:00</option>
+    <option>Kamis 13:00-14:00</option>
+  </select>
+
+  <button
+    type="submit"
+    disabled={loading}
+    className="w-full bg-green-600 text-white py-4 rounded-xl font-bold"
+  >
+    {loading ? "Mengirim..." : "Kirim Pengajuan"}
+  </button>
+</form>
+
             )}
           </div>
         </div>
       )}
+      <footer className="bg-[#5B7DB1] text-white py-5 text-center rounded-t-3xl font-semibold">
+        © {new Date().getFullYear()} BKcTB | SMK Taruna Bhakti
+      </footer>
     </main>
   );
 }

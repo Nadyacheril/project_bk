@@ -3,13 +3,12 @@ import connection from "@/lib/database";
 
 export async function POST(req) {
   try {
-    const { guruId, userId, kelas_siswa, topik, jam } = await req.json();
+    const { guruId, userId, kelas_siswa, topik, jam, tanggal } = await req.json();
 
-    if (!guruId || !userId || !kelas_siswa || !topik || !jam) {
+    if (!guruId || !userId || !kelas_siswa || !topik || !jam || !tanggal) {
       return NextResponse.json({ error: "Lengkapi semua field!" }, { status: 400 });
     }
 
-    // API ini pintar → otomatis cari siswaId & nama dari userId
     const [siswa] = await connection.execute(
       "SELECT id, nama FROM siswa WHERE user_id = ?",
       [userId]
@@ -20,12 +19,13 @@ export async function POST(req) {
     }
 
     await connection.execute(
-      `INSERT INTO pengajuan (id_guru, id_siswa, nama_siswa, kelas_siswa, topik, jam)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [guruId, siswa[0].id, siswa[0].nama, kelas_siswa, topik, jam]
+      `INSERT INTO pengajuan (id_guru, id_siswa, nama_siswa, kelas_siswa, topik, jam, tanggal)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [guruId, siswa[0].id, siswa[0].nama, kelas_siswa, topik, jam, tanggal]
     );
 
     return NextResponse.json({ success: true, message: "Pengajuan berhasil!" });
+
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Gagal mengirim" }, { status: 500 });

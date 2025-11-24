@@ -1,984 +1,6 @@
-// "use client";
-// import { useEffect, useState } from "react";
-
-// export default function DashboardGuru() {
-//   const [userData, setUserData] = useState(null);
-//   const [pengajuan, setPengajuan] = useState([]);
-//   const [loadingIds, setLoadingIds] = useState({});
-//   const [showNotif, setShowNotif] = useState(false);
-
-//   // Ambil userData dari localStorage
-//   useEffect(() => {
-//     const storedUser = localStorage.getItem("user");
-//     if (!storedUser) return (window.location.href = "/login");
-//     setUserData(JSON.parse(storedUser));
-//   }, []);
-
-//   // Fetch pengajuan
-//   const fetchPengajuan = async () => {
-//     if (!userData) return;
-//     try {
-//       const res = await fetch(`/api/guru/pengajuan?guruId=${userData.id}`);
-//       const data = await res.json();
-//       if (data.success) setPengajuan(data.data);
-//     } catch (err) {
-//       console.error("Gagal fetch pengajuan:", err);
-//     }
-//   };
-
-//   // Auto refresh
-//   useEffect(() => {
-//     if (!userData) return;
-//     fetchPengajuan();
-//     const interval = setInterval(fetchPengajuan, 10000);
-//     return () => clearInterval(interval);
-//   }, [userData]);
-
-//   // Setujui pengajuan
-//   const handleUpdateStatus = async (id) => {
-//     setLoadingIds((prev) => ({ ...prev, [id]: true }));
-//     await fetch(`/api/pengajuan/${id}`, {
-//       method: "PATCH",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify({ status: "Disetujui" }),
-//     });
-//     fetchPengajuan();
-//     setLoadingIds((prev) => ({ ...prev, [id]: false }));
-//   };
-
-//   // Tandai notif sudah dibaca
-//   const handleNotifRead = async (id) => {
-//     await fetch("/api/pengajuan/notif", {
-//       method: "PATCH",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify({ id }),
-//     });
-//     fetchPengajuan();
-//   };
-
-//   // Hitung notif baru
-//   const notifCount = pengajuan.filter(
-//     (p) => p.notif_dibaca === 0 && p.status === "Pending"
-//   ).length;
-
-//   if (!userData) return <p>Loading...</p>;
-
-//   // Ambil nama guru dari email
-//   const guruName = userData.nama || userData.email.split("@")[0];
-
-//   return (
-//     <main className="min-h-screen bg-white text-[#2C3E50] p-6">
-//       {/* Navbar */}
-//       <nav className="bg-[#5B7DB1] text-white px-6 py-4 rounded-full shadow-lg flex justify-between items-center mb-8">
-//         <h1 className="text-2xl font-bold">BKcTB - Dashboard Guru</h1>
-//         <div className="flex items-center gap-4">
-//           <button
-//             className="relative bg-white text-[#5B7DB1] px-4 py-2 rounded-lg font-semibold"
-//             onClick={() => setShowNotif(true)}
-//           >
-//             Notifikasi
-//             {notifCount > 0 && (
-//               <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center animate-pulse">
-//                 {notifCount}
-//               </span>
-//             )}
-//           </button>
-//           <button
-//             onClick={() => { localStorage.removeItem("user"); window.location.href = "/login"; }}
-//             className="bg-white text-[#5B7DB1] px-4 py-2 rounded-lg font-semibold"
-//           >
-//             Logout
-//           </button>
-//         </div>
-//       </nav>
-
-//       {/* Selamat datang */}
-//       <h2 className="text-2xl font-semibold text-blue-600 mb-1">
-//         Selamat datang, {guruName}!
-//       </h2>
-//       <p className="text-gray-700 mb-6">Dashboard pengajuan siswa</p>
-
-//       {/* Pengajuan */}
-//       {pengajuan.length === 0 ? (
-//         <p className="text-gray-500">Belum ada pengajuan.</p>
-//       ) : (
-//         <div className="space-y-4">
-//           {pengajuan.map((item) => (
-//             <div
-//               key={item.id}
-//               className={`p-5 rounded-xl border ${
-//                 item.notif_dibaca === 0 && item.status === "Pending"
-//                   ? "border-blue-500 bg-blue-50"
-//                   : "border-gray-300"
-//               }`}
-//             >
-//               <div className="flex justify-between items-start">
-//                 <div>
-//                   <p className="font-bold text-lg">{item.nama_siswa}</p>
-//                   <p>Kelas: {item.kelas_siswa}</p>
-//                   <p>Topik: {item.topik}</p>
-//                   <p>Waktu: {item.jam}</p>
-//                   <p>
-//                     Status:{" "}
-//                     <span
-//                       className={`font-bold ${
-//                         item.status === "Pending"
-//                           ? "text-orange-600"
-//                           : item.status === "Disetujui"
-//                           ? "text-green-600"
-//                           : "text-red-600"
-//                       }`}
-//                     >
-//                       {item.status}
-//                     </span>
-//                   </p>
-//                   {item.alasan && (
-//                     <p className="text-red-600 mt-2">
-//                       <b>Alasan:</b> {item.alasan}
-//                     </p>
-//                   )}
-//                 </div>
-//                 {item.status === "Pending" && (
-//                   <button
-//                     onClick={() => handleUpdateStatus(item.id)}
-//                     className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
-//                     disabled={loadingIds[item.id]}
-//                   >
-//                     {loadingIds[item.id] ? "Mengirim..." : "Setujui"}
-//                   </button>
-//                 )}
-//               </div>
-//             </div>
-//           ))}
-//         </div>
-//       )}
-
-//       {/* Modal Notifikasi */}
-//       {showNotif && (
-//         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 px-4">
-//           <div className="bg-white p-6 rounded-2xl w-full max-w-md shadow-2xl relative max-h-[70vh] overflow-y-auto">
-//             <button
-//               onClick={() => setShowNotif(false)}
-//               className="absolute top-3 right-3 font-bold text-lg"
-//             >
-//               X
-//             </button>
-//             <h3 className="text-xl font-bold mb-4">Pengajuan Masuk</h3>
-//             {pengajuan.filter(p => p.notif_dibaca === 0 && p.status === "Pending").length === 0
-//               ? <p className="text-gray-500">Tidak ada pengajuan baru.</p>
-//               : pengajuan.filter(p => p.notif_dibaca === 0 && p.status === "Pending").map(p => (
-//                   <div key={p.id} className="border p-3 rounded mb-2 bg-blue-50">
-//                     <p><b>{p.nama_siswa}</b> mengajukan konseling.</p>
-//                     <p>Kelas: {p.kelas_siswa} | Topik: {p.topik} | Waktu: {p.jam}</p>
-//                     <button
-//                       onClick={() => handleNotifRead(p.id)}
-//                       className="mt-2 bg-green-600 text-white px-3 py-1 rounded"
-//                     >
-//                       Tandai sudah dibaca
-//                     </button>
-//                   </div>
-//               ))}
-//           </div>
-//         </div>
-//       )}
-//     </main>
-//   );
-// }
-
-// "use client";
-// import { useEffect, useState } from "react";
-// import { Bell, X } from "lucide-react";
-
-// export default function DashboardGuru() {
-//   const [userData, setUserData] = useState(null);
-//   const [pengajuan, setPengajuan] = useState([]);
-//   const [loading, setLoading] = useState(false);
-//   const [showNotif, setShowNotif] = useState(false);
-
-//   // Ambil data user dari localStorage
-//   useEffect(() => {
-//     const storedUser = localStorage.getItem("user");
-//     if (!storedUser) return (window.location.href = "/login");
-//     setUserData(JSON.parse(storedUser));
-//   }, []);
-
-//   // Fetch pengajuan
-//   const fetchPengajuan = async () => {
-//     if (!userData) return;
-//     try {
-//       const res = await fetch(`/api/guru/pengajuan?guruId=${userData.id}`);
-//       const data = await res.json();
-//       if (data.success) setPengajuan(data.data);
-//     } catch (err) {
-//       console.error("Gagal fetch pengajuan:", err);
-//     }
-//   };
-
-//   useEffect(() => {
-//     fetchPengajuan();
-//     const interval = setInterval(fetchPengajuan, 10000);
-//     return () => clearInterval(interval);
-//   }, [userData]);
-
-//   // Setujui pengajuan
-//   const handleUpdateStatus = async (id) => {
-//     setLoading(true);
-//     await fetch(`/api/pengajuan/${id}`, {
-//       method: "PATCH",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify({ status: "Disetujui" }),
-//     });
-//     fetchPengajuan();
-//     setLoading(false);
-//   };
-
-//   // Tandai notif sudah dibaca
-//   const handleNotifRead = async (id) => {
-//     await fetch("/api/pengajuan/notif", {
-//       method: "PATCH",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify({ id }),
-//     });
-//     fetchPengajuan();
-//   };
-
-//   // Hapus notif
-//   const handleNotifDelete = async (id) => {
-//     await fetch("/api/pengajuan/notif", {
-//       method: "DELETE",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify({ id }),
-//     });
-//     fetchPengajuan();
-//   };
-
-//   const notifCount = pengajuan.filter(p => p.notif_dibaca === 0 && p.status === "Pending").length;
-
-//   if (!userData) return <p>Loading...</p>;
-
-//   const guruNama = userData.email?.split("@")[0]; // ambil nama dari email
-
-//   return (
-//     <main className="min-h-screen bg-white text-[#2C3E50] p-6">
-//       {/* Navbar */}
-//       <nav className="bg-[#5B7DB1] text-white px-6 py-4 rounded-full shadow-lg flex justify-between items-center mb-8">
-//         <h1 className="text-2xl font-bold">BKcTB - Dashboard Guru</h1>
-//         <div className="flex items-center gap-4">
-//           {/* Notifikasi */}
-//           <button
-//             className="relative p-2 rounded-full hover:bg-white/20 transition"
-//             onClick={() => setShowNotif(true)}
-//             title="Notifikasi"
-//           >
-//             <Bell size={24} />
-//             {notifCount > 0 && (
-//               <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
-//                 {notifCount}
-//               </span>
-//             )}
-//           </button>
-
-//           {/* Logout */}
-//           <button
-//             onClick={() => { localStorage.removeItem("user"); window.location.href = "/login"; }}
-//             className="bg-white text-[#5B7DB1] px-4 py-2 rounded-lg font-semibold hover:bg-gray-100 transition"
-//           >
-//             Logout
-//           </button>
-//         </div>
-//       </nav>
-
-//       {/* Selamat datang */}
-//       <section className="mb-6">
-//         <h2 className="text-2xl font-semibold text-blue-600">Selamat datang,</h2>
-//         <p className="text-3xl font-bold mt-2">{guruNama}</p>
-//       </section>
-
-//       {/* Daftar Pengajuan */}
-//       <h2 className="text-3xl font-bold mb-6">Pengajuan Masuk</h2>
-//       {pengajuan.length === 0 ? (
-//         <p className="text-gray-500">Belum ada pengajuan.</p>
-//       ) : (
-//         <div className="space-y-4">
-//           {pengajuan.map(item => (
-//             <div
-//               key={item.id}
-//               className={`p-5 rounded-xl border ${
-//                 item.notif_dibaca === 0 && item.status === "Pending"
-//                   ? "border-blue-500 bg-blue-50"
-//                   : "border-gray-300"
-//               }`}
-//             >
-//               <div className="flex justify-between items-start">
-//                 <div>
-//                   <p className="font-bold text-lg">{item.nama_siswa}</p>
-//                   <p>Kelas: {item.kelas_siswa}</p>
-//                   <p>Topik: {item.topik}</p>
-//                   <p>Waktu: {item.jam}</p>
-//                   <p>Tanggal: {item.tanggal}</p>
-//                   <p>
-//                     Status:{" "}
-//                     <span
-//                       className={`font-bold ${
-//                         item.status === "Pending"
-//                           ? "text-orange-600"
-//                           : item.status === "Disetujui"
-//                           ? "text-green-600"
-//                           : "text-red-600"
-//                       }`}
-//                     >
-//                       {item.status}
-//                     </span>
-//                   </p>
-//                   {item.alasan && (
-//                     <p className="text-red-600 mt-2">
-//                       <b>Alasan:</b> {item.alasan}
-//                     </p>
-//                   )}
-//                 </div>
-
-//                 {/* Tombol Setujui hanya jika Pending */}
-//                 {item.status === "Pending" && (
-//                   <div className="flex gap-2">
-//                     <button
-//                       onClick={() => handleUpdateStatus(item.id)}
-//                       className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
-//                       disabled={loading}
-//                     >
-//                       Setujui
-//                     </button>
-//                   </div>
-//                 )}
-//               </div>
-//             </div>
-//           ))}
-//         </div>
-//       )}
-
-//       {/* Modal Notifikasi */}
-//       {showNotif && (
-//         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 px-4">
-//           <div className="bg-white p-6 rounded-2xl w-full max-w-md shadow-2xl relative">
-//             <button
-//               onClick={() => setShowNotif(false)}
-//               className="absolute top-3 right-3 p-1 hover:bg-gray-200 rounded-full transition"
-//             >
-//               <X size={20} />
-//             </button>
-//             <h3 className="text-xl font-bold mb-4">Pengajuan Masuk</h3>
-//             {pengajuan.filter(p => p.status === "Pending").length === 0 ? (
-//               <p className="text-gray-500">Tidak ada pengajuan baru.</p>
-//             ) : (
-//               pengajuan
-//                 .filter(p => p.status === "Pending")
-//                 .map(p => (
-//                   <div key={p.id} className="border p-3 rounded mb-2 bg-blue-50 flex justify-between items-center">
-//                     <div>
-//                       <p><b>{p.nama_siswa}</b> mengajukan konseling.</p>
-//                       <p>Kelas: {p.kelas_siswa} | Topik: {p.topik} | Waktu: {p.jam} | Tanggal: {p.tanggal}</p>
-//                     </div>
-//                     <div className="flex gap-2">
-//                       <button
-//                         onClick={() => handleNotifRead(p.id)}
-//                         className="bg-green-600 text-white px-3 py-1 rounded"
-//                       >
-//                         Sudah dibaca
-//                       </button>
-//                       <button
-//                         onClick={() => handleNotifDelete(p.id)}
-//                         className="bg-red-600 text-white px-3 py-1 rounded"
-//                       >
-//                         X
-//                       </button>
-//                     </div>
-//                   </div>
-//                 ))
-//             )}
-//           </div>
-//         </div>
-//       )}
-//     </main>
-//   );
-// }
-
-
-// "use client";
-// import { useEffect, useState } from "react";
-// import { Bell, X } from "lucide-react";
-
-// export default function DashboardGuru() {
-//   const [userData, setUserData] = useState(null);
-//   const [pengajuan, setPengajuan] = useState([]);
-//   const [loading, setLoading] = useState(false);
-//   const [showNotif, setShowNotif] = useState(false);
-
-//   useEffect(() => {
-//     const storedUser = localStorage.getItem("user");
-//     if (!storedUser) return (window.location.href = "/login");
-//     setUserData(JSON.parse(storedUser));
-//   }, []);
-
-//   const fetchPengajuan = async () => {
-//     if (!userData) return;
-//     try {
-//       const res = await fetch(`/api/guru/pengajuan?guruId=${userData.id}`);
-//       const data = await res.json();
-//       if (data.success) setPengajuan(data.data);
-//     } catch (err) {
-//       console.error(err);
-//     }
-//   };
-
-//   useEffect(() => {
-//     fetchPengajuan();
-//     const interval = setInterval(fetchPengajuan, 10000);
-//     return () => clearInterval(interval);
-//   }, [userData]);
-
-//   const handleUpdateStatus = async (id) => {
-//     setLoading(true);
-//     await fetch(`/api/pengajuan/${id}`, {
-//       method: "PATCH",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify({ status: "Disetujui" }),
-//     });
-//     fetchPengajuan();
-//     setLoading(false);
-//   };
-
-//   const handleNotifRead = async (id) => {
-//     await fetch("/api/pengajuan/notif", {
-//       method: "PATCH",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify({ id }),
-//     });
-//     fetchPengajuan();
-//   };
-
-//   const handleNotifDelete = async (id) => {
-//     await fetch("/api/pengajuan/notif", {
-//       method: "DELETE",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify({ id }),
-//     });
-//     fetchPengajuan();
-//   };
-
-//   const notifCount = pengajuan.filter(p => p.notif_dibaca === 0 && p.status === "Pending").length;
-
-//   if (!userData) return <p>Loading...</p>;
-
-//   const guruNama = userData.email?.split("@")[0];
-
-//   return (
-//     <main className="min-h-screen bg-white text-[#2C3E50] p-6">
-//       {/* Navbar */}
-//       <nav className="bg-[#5B7DB1] text-white px-6 py-4 rounded-full shadow-lg flex justify-between items-center mb-8">
-//         <h1 className="text-2xl font-bold">BKcTB - Dashboard Guru</h1>
-//         <div className="flex items-center gap-4">
-//           <button
-//             className="relative p-2 rounded-full hover:bg-white/20 transition"
-//             onClick={() => setShowNotif(true)}
-//           >
-//             <Bell size={24} />
-//             {notifCount > 0 && (
-//               <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
-//                 {notifCount}
-//               </span>
-//             )}
-//           </button>
-//           <button
-//             onClick={() => { localStorage.removeItem("user"); window.location.href = "/login"; }}
-//             className="bg-white text-[#5B7DB1] px-4 py-2 rounded-lg font-semibold hover:bg-gray-100 transition"
-//           >
-//             Logout
-//           </button>
-//         </div>
-//       </nav>
-
-//       {/* Selamat datang */}
-//       <section className="mb-6">
-//         <h2 className="text-2xl font-semibold text-blue-600">Selamat datang,</h2>
-//         <p className="text-3xl font-bold mt-2">{guruNama}</p>
-//       </section>
-
-//       {/* Daftar Pengajuan */}
-//       <h2 className="text-3xl font-bold mb-6">Pengajuan Masuk</h2>
-//       {pengajuan.length === 0 ? (
-//         <p className="text-gray-500">Belum ada pengajuan.</p>
-//       ) : (
-//         <div className="space-y-4">
-//           {pengajuan.map(item => (
-//             <div key={item.id} className={`p-5 rounded-xl border ${item.status === "Pending" ? "border-blue-500 bg-blue-50" : "border-gray-300"}`}>
-//               <div className="flex justify-between items-start">
-//                 <div>
-//                   <p className="font-bold text-lg">{item.nama_siswa}</p>
-//                   <p>Kelas: {item.kelas_siswa}</p>
-//                   <p>Topik: {item.topik}</p>
-//                   <p>Waktu: {item.jam}</p>
-//                   <p>
-//                     Tanggal: {new Date(item.tanggal).toLocaleDateString("id-ID", { weekday:"long", year:"numeric", month:"long", day:"numeric" })}
-//                   </p>
-//                   <p>Status: <span className={`font-bold ${item.status === "Pending" ? "text-orange-600" : item.status === "Disetujui" ? "text-green-600" : "text-red-600"}`}>{item.status}</span></p>
-//                   {item.alasan && <p className="text-red-600 mt-2"><b>Alasan:</b> {item.alasan}</p>}
-//                 </div>
-//                 {item.status === "Pending" && (
-//                   <button onClick={() => handleUpdateStatus(item.id)} className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700" disabled={loading}>
-//                     Setujui
-//                   </button>
-//                 )}
-//               </div>
-//             </div>
-//           ))}
-//         </div>
-//       )}
-
-//       {/* Modal Notifikasi */}
-//       {showNotif && (
-//         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 px-4">
-//           <div className="bg-white p-6 rounded-2xl w-full max-w-md shadow-2xl relative">
-//             <button onClick={() => setShowNotif(false)} className="absolute top-3 right-3 p-1 hover:bg-gray-200 rounded-full transition">
-//               <X size={20} />
-//             </button>
-//             <h3 className="text-xl font-bold mb-4">Pengajuan Masuk</h3>
-//             {pengajuan.filter(p => p.status === "Pending").length === 0 ? (
-//               <p className="text-gray-500">Tidak ada pengajuan baru.</p>
-//             ) : (
-//               pengajuan.filter(p => p.status === "Pending").map(p => (
-//                 <div key={p.id} className="border p-3 rounded mb-2 bg-blue-50 flex justify-between items-center">
-//                   <div>
-//                     <p><b>{p.nama_siswa}</b> mengajukan konseling.</p>
-//                     <p>Kelas: {p.kelas_siswa} | Topik: {p.topik} | Waktu: {p.jam}</p>
-//                     <p>Tanggal: {new Date(p.tanggal).toLocaleDateString("id-ID", { weekday:"long", year:"numeric", month:"long", day:"numeric" })}</p>
-//                   </div>
-//                   <div className="flex gap-2">
-//                     <button onClick={() => handleNotifRead(p.id)} className="bg-green-600 text-white px-3 py-1 rounded">Sudah dibaca</button>
-//                     <button onClick={() => handleNotifDelete(p.id)} className="bg-red-600 text-white px-3 py-1 rounded">Hapus</button>
-//                   </div>
-//                 </div>
-//               ))
-//             )}
-//           </div>
-//         </div>
-//       )}
-//     </main>
-//   );
-// }
-
-
-// "use client";
-// import { useEffect, useState } from "react";
-// import { Bell, X } from "lucide-react";
-
-// export default function DashboardGuru() {
-//   const [userData, setUserData] = useState(null);
-//   const [pengajuan, setPengajuan] = useState([]);
-//   const [loading, setLoading] = useState(false);
-//   const [showNotif, setShowNotif] = useState(false);
-
-//   useEffect(() => {
-//     const storedUser = localStorage.getItem("user");
-//     if (!storedUser) return (window.location.href = "/login");
-//     setUserData(JSON.parse(storedUser));
-//   }, []);
-
-//   const fetchPengajuan = async () => {
-//     if (!userData) return;
-//     try {
-//       const res = await fetch(`/api/guru/pengajuan?guruId=${userData.id}`);
-//       const data = await res.json();
-//       if (data.success) setPengajuan(data.data);
-//     } catch (err) {
-//       console.error(err);
-//     }
-//   };
-
-//   useEffect(() => {
-//     fetchPengajuan();
-//     const interval = setInterval(fetchPengajuan, 10000);
-//     return () => clearInterval(interval);
-//   }, [userData]);
-
-//   const handleUpdateStatus = async (id, status) => {
-//     setLoading(true);
-//     await fetch(`/api/pengajuan/${id}`, {
-//       method: "PATCH",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify({ status }),
-//     });
-//     fetchPengajuan();
-//     setLoading(false);
-//   };
-
-//   const handleNotifRead = async (id) => {
-//     await fetch("/api/pengajuan/notif", {
-//       method: "PATCH",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify({ id }),
-//     });
-//     fetchPengajuan();
-//   };
-
-//   const handleNotifDelete = async (id) => {
-//     await fetch("/api/pengajuan/notif", {
-//       method: "DELETE",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify({ id }),
-//     });
-//     fetchPengajuan();
-//   };
-
-//   if (!userData) return <p>Loading...</p>;
-
-//   const guruNama = userData.email?.split("@")[0];
-//   const notifCount = pengajuan.filter(p => p.notif_dibaca === 0 && p.status === "Menunggu").length;
-
-//   return (
-//     <main className="min-h-screen bg-white text-[#2C3E50] p-6">
-//       {/* Navbar */}
-//       <nav className="bg-[#5B7DB1] text-white px-6 py-4 rounded-full shadow-lg flex justify-between items-center mb-8">
-//         <h1 className="text-2xl font-bold">BKcTB - Dashboard Guru</h1>
-//         <div className="flex items-center gap-4">
-//           <button
-//             className="relative p-2 rounded-full hover:bg-white/20 transition"
-//             onClick={() => setShowNotif(true)}
-//             title="Notifikasi"
-//           >
-//             <Bell size={24} />
-//             {notifCount > 0 && (
-//               <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
-//                 {notifCount}
-//               </span>
-//             )}
-//           </button>
-
-//           <button
-//             onClick={() => { localStorage.removeItem("user"); window.location.href = "/login"; }}
-//             className="bg-white text-[#5B7DB1] px-4 py-2 rounded-lg font-semibold hover:bg-gray-100 transition"
-//           >
-//             Logout
-//           </button>
-//         </div>
-//       </nav>
-
-//       <section className="mb-6">
-//         <h2 className="text-2xl font-semibold text-blue-600">Selamat datang,</h2>
-//         <p className="text-3xl font-bold mt-2">{guruNama}</p>
-//       </section>
-
-//       <h2 className="text-3xl font-bold mb-6">Pengajuan Masuk</h2>
-
-//       {pengajuan.length === 0 ? (
-//         <p className="text-gray-500">Belum ada pengajuan.</p>
-//       ) : (
-//         <div className="space-y-4">
-//           {pengajuan.map(item => (
-//             <div
-//               key={item.id}
-//               className={`p-5 rounded-xl border ${item.status === "Menunggu" && item.notif_dibaca === 0 ? "border-blue-500 bg-blue-50" : "border-gray-300"}`}
-//             >
-//               <div className="flex justify-between items-start">
-//                 <div>
-//                   <p className="font-bold text-lg">{item.nama_siswa}</p>
-//                   <p>Kelas: {item.kelas_siswa}</p>
-//                   <p>Topik: {item.topik}</p>
-//                   <p>Waktu: {new Date(item.created_at).toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" })}</p>
-//                   <p>Status: <span className={`font-bold ${item.status === "Menunggu" ? "text-orange-600" : item.status === "Disetujui" ? "text-green-600" : "text-red-600"}`}>{item.status}</span></p>
-//                   {item.alasan && <p className="text-red-600 mt-2"><b>Alasan:</b> {item.alasan}</p>}
-//                 </div>
-//                 {item.status === "Menunggu" && (
-//                   <div className="flex gap-2">
-//                     <button
-//                       onClick={() => handleUpdateStatus(item.id, "Disetujui")}
-//                       className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
-//                       disabled={loading}
-//                     >
-//                       Setujui
-//                     </button>
-//                     <button
-//                       onClick={() => handleUpdateStatus(item.id, "Ditolak")}
-//                       className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
-//                       disabled={loading}
-//                     >
-//                       Tolak
-//                     </button>
-//                   </div>
-//                 )}
-//               </div>
-//             </div>
-//           ))}
-//         </div>
-//       )}
-
-//       {showNotif && (
-//         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 px-4">
-//           <div className="bg-white p-6 rounded-2xl w-full max-w-md shadow-2xl relative">
-//             <button onClick={() => setShowNotif(false)} className="absolute top-3 right-3 p-1 hover:bg-gray-200 rounded-full transition">
-//               <X size={20} />
-//             </button>
-//             <h3 className="text-xl font-bold mb-4">Pengajuan Masuk</h3>
-//             {pengajuan.filter(p => p.status === "Menunggu").length === 0 ? (
-//               <p className="text-gray-500">Tidak ada pengajuan baru.</p>
-//             ) : (
-//               pengajuan.filter(p => p.status === "Menunggu").map(p => (
-//                 <div key={p.id} className="border p-3 rounded mb-2 bg-blue-50 flex justify-between items-center">
-//                   <div>
-//                     <p><b>{p.nama_siswa}</b> mengajukan konseling.</p>
-//                     <p>Kelas: {p.kelas_siswa} | Topik: {p.topik}</p>
-//                     <p>Waktu: {new Date(p.created_at).toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" })}</p>
-//                   </div>
-//                   <div className="flex gap-2">
-//                     <button onClick={() => handleNotifRead(p.id)} className="bg-green-600 text-white px-3 py-1 rounded">Sudah dibaca</button>
-//                     <button onClick={() => handleNotifDelete(p.id)} className="bg-red-600 text-white px-3 py-1 rounded">Hapus</button>
-//                   </div>
-//                 </div>
-//               ))
-//             )}
-//           </div>
-//         </div>
-//       )}
-//     </main>
-//   );
-// }
-
-
-// "use client";
-// import { useEffect, useState } from "react";
-// import { Bell, X } from "lucide-react";
-
-// export default function DashboardGuru() {
-//   const [userData, setUserData] = useState(null);
-//   const [pengajuan, setPengajuan] = useState([]);
-//   const [loading, setLoading] = useState(false);
-//   const [showNotif, setShowNotif] = useState(false);
-
-//   // Ambil data user dari localStorage
-//   useEffect(() => {
-//     const storedUser = localStorage.getItem("user");
-//     if (!storedUser) return (window.location.href = "/login");
-//     setUserData(JSON.parse(storedUser));
-//   }, []);
-
-//   // Fetch pengajuan
-//   const fetchPengajuan = async () => {
-//     if (!userData) return;
-//     try {
-//       const res = await fetch(`/api/guru/pengajuan?guruId=${userData.id}`);
-//       const data = await res.json();
-//       if (data.success) setPengajuan(data.data);
-//     } catch (err) {
-//       console.error("Gagal fetch pengajuan:", err);
-//     }
-//   };
-
-//   useEffect(() => {
-//     fetchPengajuan();
-//     const interval = setInterval(fetchPengajuan, 10000); // refresh tiap 10 detik
-//     return () => clearInterval(interval);
-//   }, [userData]);
-
-//   // Setujui pengajuan
-//   const handleUpdateStatus = async (id) => {
-//     setLoading(true);
-//     await fetch(`/api/pengajuan/${id}`, {
-//       method: "PATCH",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify({ status: "Menunggu" }), // ganti Pending → Menunggu
-//     });
-//     fetchPengajuan();
-//     setLoading(false);
-//   };
-
-//   // Tandai notif sudah dibaca
-//   const handleNotifRead = async (id) => {
-//     await fetch("/api/pengajuan/notif", {
-//       method: "PATCH",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify({ id }),
-//     });
-//     fetchPengajuan();
-//   };
-
-//   // Hapus notif
-//   const handleNotifDelete = async (id) => {
-//     await fetch("/api/pengajuan/notif", {
-//       method: "DELETE",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify({ id }),
-//     });
-//     fetchPengajuan();
-//   };
-
-//   const notifCount = pengajuan.filter(p => p.notif_dibaca === 0 && p.status === "Pending").length;
-
-//   if (!userData) return <p>Loading...</p>;
-
-//   const guruNama = userData.email?.split("@")[0]; // ambil nama dari email
-
-//   // format tanggal rapi
-//   const formatTanggal = (tgl) => {
-//     const date = new Date(tgl);
-//     return date.toLocaleString("id-ID", {
-//       day: "2-digit", month: "short", year: "numeric",
-//       hour: "2-digit", minute: "2-digit"
-//     });
-//   };
-
-//   return (
-//     <main className="min-h-screen bg-white text-[#2C3E50] p-6">
-//       {/* Navbar */}
-//       <nav className="bg-[#5B7DB1] text-white px-6 py-4 rounded-full shadow-lg flex justify-between items-center mb-8">
-//         <h1 className="text-2xl font-bold">BKcTB - Dashboard Guru</h1>
-//         <div className="flex items-center gap-4">
-//           {/* Notifikasi */}
-//           <button
-//             className="relative p-2 rounded-full hover:bg-white/20 transition"
-//             onClick={() => setShowNotif(true)}
-//             title="Notifikasi"
-//           >
-//             <Bell size={24} />
-//             {notifCount > 0 && (
-//               <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
-//                 {notifCount}
-//               </span>
-//             )}
-//           </button>
-
-//           {/* Logout */}
-//           <button
-//             onClick={() => { localStorage.removeItem("user"); window.location.href = "/login"; }}
-//             className="bg-white text-[#5B7DB1] px-4 py-2 rounded-lg font-semibold hover:bg-gray-100 transition"
-//           >
-//             Logout
-//           </button>
-//         </div>
-//       </nav>
-
-//       {/* Selamat datang */}
-//       <section className="mb-6">
-//         <h2 className="text-2xl font-semibold text-blue-600">Selamat datang,</h2>
-//         <p className="text-3xl font-bold mt-2">{guruNama}</p>
-//       </section>
-
-//       {/* Daftar Pengajuan */}
-//       <h2 className="text-3xl font-bold mb-6">Pengajuan Masuk</h2>
-//       {pengajuan.length === 0 ? (
-//         <p className="text-gray-500">Belum ada pengajuan.</p>
-//       ) : (
-//         <div className="space-y-4">
-//           {pengajuan.map(item => (
-//             <div
-//               key={item.id}
-//               className={`p-5 rounded-xl border ${
-//                 item.status === "Pending" || item.status === "Menunggu"
-//                   ? "border-blue-500 bg-blue-50"
-//                   : "border-gray-300"
-//               }`}
-//             >
-//               <div className="flex justify-between items-start">
-//                 <div>
-//                   <p className="font-bold text-lg">{item.nama_siswa}</p>
-//                   <p>Kelas: {item.kelas_siswa}</p>
-//                   <p>Topik: {item.topik}</p>
-//                   <p>Waktu: {formatTanggal(item.created_at)}</p>
-//                   <p>
-//                     Status:{" "}
-//                     <span
-//                       className={`font-bold ${
-//                         item.status === "Menunggu"
-//                           ? "text-orange-600"
-//                           : item.status === "Disetujui"
-//                           ? "text-green-600"
-//                           : "text-red-600"
-//                       }`}
-//                     >
-//                       {item.status}
-//                     </span>
-//                   </p>
-//                   {item.alasan && (
-//                     <p className="text-red-600 mt-2">
-//                       <b>Alasan:</b> {item.alasan}
-//                     </p>
-//                   )}
-//                 </div>
-
-//                 {/* Tombol Setujui hanya jika Menunggu */}
-//                 {item.status === "Menunggu" && (
-//                   <div className="flex gap-2">
-//                     <button
-//                       onClick={() => handleUpdateStatus(item.id)}
-//                       className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
-//                       disabled={loading}
-//                     >
-//                       Setujui
-//                     </button>
-//                   </div>
-//                 )}
-//               </div>
-//             </div>
-//           ))}
-//         </div>
-//       )}
-
-//       {/* Modal Notifikasi */}
-//       {showNotif && (
-//         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 px-4">
-//           <div className="bg-white p-6 rounded-2xl w-full max-w-md shadow-2xl relative">
-//             <button
-//               onClick={() => setShowNotif(false)}
-//               className="absolute top-3 right-3 p-1 hover:bg-gray-200 rounded-full transition"
-//             >
-//               <X size={20} />
-//             </button>
-//             <h3 className="text-xl font-bold mb-4">Pengajuan Masuk</h3>
-
-//             {pengajuan.length === 0 ? (
-//               <p className="text-gray-500">Belum ada pengajuan.</p>
-//             ) : (
-//               pengajuan.map(p => (
-//                 <div
-//                   key={p.id}
-//                   className={`border p-3 rounded mb-2 flex justify-between items-center ${
-//                     p.notif_dibaca === 0 ? "bg-blue-50" : "bg-gray-100"
-//                   }`}
-//                 >
-//                   <div>
-//                     <p><b>{p.nama_siswa}</b> mengajukan konseling.</p>
-//                     <p>Kelas: {p.kelas_siswa} | Topik: {p.topik} | Waktu: {formatTanggal(p.created_at)}</p>
-//                   </div>
-//                   <div className="flex gap-2">
-//                     <button
-//                       onClick={() => handleNotifRead(p.id)}
-//                       disabled={p.notif_dibaca === 1}
-//                       className={`px-3 py-1 rounded ${
-//                         p.notif_dibaca === 1
-//                           ? "bg-gray-400 text-white cursor-not-allowed"
-//                           : "bg-green-600 text-white hover:bg-green-700"
-//                       }`}
-//                     >
-//                       Sudah dibaca
-//                     </button>
-//                     <button
-//                       onClick={() => handleNotifDelete(p.id)}
-//                       className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
-//                     >
-//                       Hapus
-//                     </button>
-//                   </div>
-//                 </div>
-//               ))
-//             )}
-//           </div>
-//         </div>
-//       )}
-//     </main>
-//   );
-// }
-
-
 "use client";
 import { useEffect, useState } from "react";
-import { Bell, X } from "lucide-react";
+import { Bell, X, Trash2, CheckCircle } from "lucide-react";
 
 export default function DashboardGuru() {
   const [userData, setUserData] = useState(null);
@@ -986,165 +8,167 @@ export default function DashboardGuru() {
   const [loading, setLoading] = useState(false);
   const [showNotif, setShowNotif] = useState(false);
 
-  // Ambil data user dari localStorage
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (!storedUser) return (window.location.href = "/login");
     setUserData(JSON.parse(storedUser));
   }, []);
 
-  // Fetch pengajuan
   const fetchPengajuan = async () => {
     if (!userData) return;
     try {
       const res = await fetch(`/api/guru/pengajuan?guruId=${userData.id}`);
       const data = await res.json();
-      if (data.success) setPengajuan(data.data);
+      if (data.success) setPengajuan(data.data || []);
     } catch (err) {
-      console.error("Gagal fetch pengajuan:", err);
+      console.error("Gagal fetch:", err);
     }
   };
 
   useEffect(() => {
-    fetchPengajuan();
-    const interval = setInterval(fetchPengajuan, 10000); // refresh tiap 10 detik
-    return () => clearInterval(interval);
+    if (userData) {
+      fetchPengajuan();
+      const interval = setInterval(fetchPengajuan, 10000);
+      return () => clearInterval(interval);
+    }
   }, [userData]);
 
-  // Setujui pengajuan
-  const handleUpdateStatus = async (id) => {
+  // SETUJUI
+  const handleSetujui = async (id) => {
+    if (!confirm("Yakin SETUJUI pengajuan ini?")) return;
     setLoading(true);
-    await fetch(`/api/pengajuan/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: "Menunggu" }),
-    });
-    fetchPengajuan();
+    try {
+      const res = await fetch(`/api/pengajuan/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "Disetujui" }),
+      });
+      if (res.ok) {
+        await fetchPengajuan();
+        alert("Pengajuan disetujui!");
+      } else alert("Gagal setujui.");
+    } catch (err) {
+      alert("Error jaringan!");
+    }
     setLoading(false);
   };
 
-  // Tandai notif sudah dibaca
-  const handleNotifRead = async (id) => {
-    await fetch("/api/pengajuan/notif", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id }),
-    });
-    fetchPengajuan();
+  // HAPUS PERMANEN — PAKE TRIK POST BIAR GAMPANG (LU MALES KAN?)
+  const handleHapus = async (id) => {
+    if (!confirm("YAKIN HAPUS PERMANEN?\nKalo udah dihapus jangan nyesel yaw")) return;
+
+    try {
+      const res = await fetch(`/api/pengajuan/${id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ hapus: true }), // KUNCI INI!
+      });
+
+      if (res.ok) {
+        await fetchPengajuan();
+        alert("Pengajuan berhasil DIHAPUS dari database!");
+      } else {
+        const err = await res.text();
+        alert("Gagal hapus: " + err);
+      }
+    } catch (err) {
+      alert("Error jaringan!");
+    }
   };
 
-  // Hapus notif / riwayat
-  const handleNotifDelete = async (id) => {
-    await fetch("/api/pengajuan/notif", {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id }),
-    });
-    fetchPengajuan();
-  };
+  if (!userData) return <div className="text-center mt-20 text-2xl">Loading...</div>;
 
-  if (!userData) return <p>Loading...</p>;
+  const guruNama = userData.nama || userData.email?.split("@")[0] || "Guru";
+  const notifCount = pengajuan.filter(p => p.status === "Menunggu").length;
 
-  const guruNama = userData.email?.split("@")[0];
-
-  const notifCount = pengajuan.filter(p => p.notif_dibaca === 0 && p.status === "Menunggu").length;
-
-  // Format tanggal lebih friendly
-  const formatTanggal = (iso) => {
-    const d = new Date(iso);
-    return d.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" });
-  };
+  const formatTanggal = (date) => new Date(date).toLocaleString("id-ID", {
+    day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit"
+  });
 
   return (
-    <main className="min-h-screen bg-white text-[#2C3E50] p-6">
+    <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 text-gray-800 p-6">
       {/* Navbar */}
-      <nav className="bg-[#5B7DB1] text-white px-6 py-4 rounded-full shadow-lg flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold">BKcTB - Dashboard Guru</h1>
-        <div className="flex items-center gap-4">
-          {/* Notifikasi */}
-          <button
-            className="relative p-2 rounded-full hover:bg-white/20 transition"
-            onClick={() => setShowNotif(true)}
-            title="Notifikasi"
-          >
-            <Bell size={24} />
+      <nav className="bg-gradient-to-r from-[#5B7DB1] to-[#3a5d8a] text-white px-8 py-3 rounded-3xl shadow-2xl flex justify-between items-center mb-10">
+        <h1 className="text-2xl font-bold tracking-wider">BKcTB - Dashboard Guru</h1>
+        <div className="flex items-center gap-6">
+          <button onClick={() => setShowNotif(true)} className="relative p-3 bg-white/20 rounded-full hover:bg-white/30 transition">
+            <Bell size={28} />
             {notifCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
+              <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full w-7 h-7 flex items-center justify-center animate-pulse">
                 {notifCount}
               </span>
             )}
           </button>
-
-          {/* Logout */}
-          <button
-            onClick={() => { localStorage.removeItem("user"); window.location.href = "/login"; }}
-            className="bg-white text-[#5B7DB1] px-4 py-2 rounded-lg font-semibold hover:bg-gray-100 transition"
-          >
+          <button onClick={() => { localStorage.clear(); window.location.href = "/login"; }}
+            className="bg-white text-[#5B7DB1] px-5 py-3 rounded-xl font-bold hover:bg-gray-100 transition shadow-lg">
             Logout
           </button>
         </div>
       </nav>
 
-      {/* Selamat datang */}
-      <section className="mb-6">
-        <h2 className="text-2xl font-semibold text-center text-blue-600">Selamat datang,</h2>
-        <p className="text-3xl text-center font-bold mt-2">{guruNama}</p>
-      </section>
+      {/* Selamat Datang */}
+      <div className="text-center mb-12">
+        <h2 className="text-3xl font-bold text-[#2C3E50]">⋆.𐙚 ̊Selamat Datang!!,</h2>
+        <p className="text-5xl font-extrabold text-[#5B7DB1] mt-3">{guruNama}!</p>
+      </div>
 
       {/* Daftar Pengajuan */}
-      <h2 className="text-3xl font-bold mb-6">Pengajuan Masuk</h2>
+      <h2 className="text-2xl font-bold text-[#2C3E50] mb-8 text-center">Daftar Pengajuan Konseling ᝰ.ᐟ</h2>
+
       {pengajuan.length === 0 ? (
-        <p className="text-gray-500">Belum ada pengajuan.</p>
+        <div className="text-center py-20">
+          <p className="text-2xl text-gray-500">Belum ada pengajuan masuk.</p>
+        </div>
       ) : (
-        <div className="space-y-4">
-          {pengajuan.map(item => (
-            <div
-              key={item.id}
-              className={`p-5 rounded-xl border ${
-                item.notif_dibaca === 0 && item.status === "Menunggu"
-                  ? "border-blue-500 bg-blue-50"
-                  : "border-gray-300"
-              }`}
-            >
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="font-bold text-lg">{item.nama_siswa}</p>
-                  <p>Kelas: {item.kelas_siswa}</p>
-                  <p>Topik: {item.topik}</p>
-                  <p>Waktu: {formatTanggal(item.created_at)}</p>
-                  <p>
-                    Status:{" "}
-                    <span
-                      className={`font-bold ${
-                        item.status === "Menunggu"
-                          ? "text-orange-600"
-                          : item.status === "Disetujui"
-                          ? "text-green-600"
-                          : "text-red-600"
-                      }`}
-                    >
+        <div className="grid gap-6 max-w-5xl mx-auto">
+          {pengajuan.map((item) => (
+            <div key={item.id} className={`p-8 rounded-3xl shadow-xl border-4 transition-all ${
+              item.status === "Menunggu" ? "border-blue-500 bg-blue-50" : "border-gray-300 bg-white"
+            }`}>
+              <div className="flex justify-between items-start gap-6">
+                <div className="flex-1">
+                  <h3 className="text-2xl font-bold text-[#2C3E50]">{item.nama_siswa}</h3>
+                  <p className="text-lg mt-2"><strong>Kelas:</strong> {item.kelas_siswa}</p>
+                  <p className="text-lg"><strong>Topik:</strong> {item.topik}</p>
+                  <p className="text-sm text-gray-600 mt-3">Diajukan: {formatTanggal(item.created_at)}</p>
+
+                  <div className="mt-5 flex items-center gap-3">
+                    <span className="font-bold text-lg">Status:</span>
+                    <span className={`px-5 py-2 rounded-full font-bold text-white ${
+                      item.status === "Menunggu" ? "bg-orange-600" :
+                      item.status === "Disetujui" ? "bg-green-600" : "bg-red-600"
+                    }`}>
                       {item.status}
                     </span>
-                  </p>
+                  </div>
+
                   {item.alasan && (
-                    <p className="text-red-600 mt-2">
-                      <b>Alasan:</b> {item.alasan}
+                    <p className="mt-4 text-red-700 font-medium bg-red-50 p-4 rounded-xl">
+                      <strong>Alasan Penolakan:</strong> {item.alasan}
                     </p>
                   )}
                 </div>
 
-                {/* Tombol Setujui hanya jika Menunggu */}
-                {item.status === "Menunggu" && (
-                  <div className="flex gap-2">
+                {/* Tombol Aksi */}
+                <div className="flex flex-col gap-4">
+                  {item.status === "Menunggu" && (
                     <button
-                      onClick={() => handleUpdateStatus(item.id)}
-                      className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
+                      onClick={() => handleSetujui(item.id)}
                       disabled={loading}
+                      className="bg-green-600 hover:bg-green-700 text-white font-bold px-8 py-4 rounded-2xl shadow-lg flex items-center gap-3 transition disabled:opacity-70"
                     >
-                      Setujui
+                      <CheckCircle size={24} />
+                      {loading ? "Memproses..." : "SETUJUI"}
                     </button>
-                  </div>
-                )}
+                  )}
+                  <button
+                    onClick={() => handleHapus(item.id)}
+                    className="bg-red-600 hover:bg-red-700 text-white font-bold px-8 py-4 rounded-2xl shadow-lg flex items-center gap-3 transition"
+                  >
+                    <Trash2 size={24} />
+                    
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -1153,44 +177,38 @@ export default function DashboardGuru() {
 
       {/* Modal Notifikasi */}
       {showNotif && (
-        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 px-4">
-          <div className="bg-white p-6 rounded-2xl w-full max-w-md shadow-2xl relative">
-            <button
-              onClick={() => setShowNotif(false)}
-              className="absolute top-3 right-3 p-1 hover:bg-gray-200 rounded-full transition"
-            >
-              <X size={20} />
-            </button>
-            <h3 className="text-xl font-bold mb-4">Pengajuan Masuk</h3>
-            {pengajuan.filter(p => p.status === "Menunggu").length === 0 ? (
-              <p className="text-gray-500">Tidak ada pengajuan baru.</p>
-            ) : (
-              pengajuan
-                .filter(p => p.status === "Menunggu")
-                .map(p => (
-                  <div key={p.id} className="border p-3 rounded mb-2 bg-blue-50 flex justify-between items-center">
-                    <div>
-                      <p><b>{p.nama_siswa}</b> mengajukan konseling.</p>
-                      <p>Kelas: {p.kelas_siswa} | Topik: {p.topik} | Waktu: {formatTanggal(p.created_at)}</p>
-                    </div>
-                    <div className="flex gap-2">
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6">
+          <div className="bg-white rounded-2xl shadow-1xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+            <div className="p-8">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-2xl font-bold text-[#2C3E50]">Notifikasi Pengajuan Baru</h3>
+                <button onClick={() => setShowNotif(false)} className="p-3 hover:bg-gray-200 rounded-full transition">
+                  <X size={28} />
+                </button>
+              </div>
+
+              {pengajuan.filter(p => p.status === "Menunggu").length === 0 ? (
+                <p className="text-center text-gray-500 text-xl py-12">Tidak ada pengajuan baru.</p>
+              ) : (
+                <div className="space-y-5">
+                  {pengajuan.filter(p => p.status === "Menunggu").map((p) => (
+                    <div key={p.id} className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-300 rounded-2xl p-6 flex justify-between items-center">
+                      <div>
+                        <p className="text-2xl font-bold">{p.nama_siswa}</p>
+                        <p className="text-lg text-gray-700 mt-1">Kelas {p.kelas_siswa} • {p.topik}</p>
+                        <p className="text-sm text-gray-500 mt-2">{formatTanggal(p.created_at)}</p>
+                      </div>
                       <button
-                        onClick={() => handleNotifRead(p.id)}
-                        className={`px-3 py-1 rounded ${p.notif_dibaca === 1 ? "bg-gray-400 text-white cursor-not-allowed" : "bg-green-600 text-white"}`}
-                        disabled={p.notif_dibaca === 1}
+                        onClick={() => handleHapus(p.id)}
+                        className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-xl font-bold flex items-center gap-3 shadow-lg transition"
                       >
-                        Sudah dibaca
-                      </button>
-                      <button
-                        onClick={() => handleNotifDelete(p.id)}
-                        className="bg-red-600 text-white px-3 py-1 rounded"
-                      >
-                        Hapus
+                        <Trash2 size={22} /> HAPUS
                       </button>
                     </div>
-                  </div>
-                ))
-            )}
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}

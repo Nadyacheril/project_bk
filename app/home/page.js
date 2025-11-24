@@ -100,13 +100,13 @@ export default function HomePage() {
       </nav>
 
       <section className="text-center mt-10">
-        <h2 className="text-2xl font-semibold text-blue-600">Selamat datang,</h2>
-        <p className="text-3xl font-bold mt-2">{userData.nama || userData.email}</p>
+        <h2 className="text-3xl font-semibold text-[#5B7DB1]">Selamat datang 𐚁,</h2>
+        <p className="text-2xl font-bold mt-2">{userData.nama || userData.email}</p>
       </section>
 
       <section className="py-16 text-center">
-        <h2 className="text-lg font-semibold text-blue-600 mb-12">
-          Guru Bimbingan Konseling <br /> Klik foto untuk mengajukan
+        <h2 className="text-lg font-semibold text-[#5B7DB1] mb-12">
+          Guru Bimbingan Konseling Klik foto untuk mengajukan
         </h2>
 
         <div className="grid grid-cols-2 gap-10 max-w-md mx-auto">
@@ -202,3 +202,5 @@ export default function HomePage() {
     </main>
   );
 }
+
+

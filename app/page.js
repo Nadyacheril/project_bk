@@ -328,7 +328,7 @@ export default function MainPage({ user }) {
 
       {/* ============ FOOTER ============ */}
       <footer className="bg-[#5B7DB1] text-white py-5 text-center rounded-t-3xl font-semibold">
-        © {new Date().getFullYear()} BKcTB | SMK Taruna Bhakti
+        © {new Date().getFullYear()} © 2025 BKcTB | SMK Taruna Bhakti
       </footer>
     </main>
   );

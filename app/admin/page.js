@@ -1,3 +1,152 @@
+// "use client";
+
+// import { useEffect, useState } from "react";
+
+// export default function AdminDashboard() {
+//   const [users, setUsers] = useState([]);
+//   const [form, setForm] = useState({
+//     nama: "",
+//     email: "",
+//     password: "",
+//     nip: "",
+//   });
+
+//   const [msg, setMsg] = useState("");
+
+//   // Ambil semua user
+//   async function loadUsers() {
+//     const res = await fetch("/api/admin/get-users");
+//     const data = await res.json();
+//     setUsers(data.users);
+//   }
+
+//   useEffect(() => {
+//     loadUsers();
+//   }, []);
+
+//   // Tambah guru
+//   async function handleSubmit(e) {
+//     e.preventDefault();
+//     setMsg("");
+
+//     const res = await fetch("/api/admin/create-guru", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify(form),
+//     });
+
+//     const data = await res.json();
+
+//     if (data.success) {
+//       setMsg("Guru berhasil ditambahkan!");
+//       setForm({ nama: "", email: "", password: "", nip: "" });
+//       loadUsers();
+//     } else {
+//       setMsg("Gagal: " + data.error);
+//     }
+//   }
+
+//   // Hapus user
+//   async function deleteUser(id) {
+//     if (!confirm("Yakin mau hapus akun ini?")) return;
+
+//     const res = await fetch("/api/admin/delete-user", {
+//       method: "DELETE",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({ id }),
+//     });
+
+//     const data = await res.json();
+//     if (data.success) {
+//       loadUsers();
+//     }
+//   }
+
+//   return (
+//     <div className="p-10 space-y-10">
+
+//       <h1 className="text-3xl font-bold">Dashboard Admin</h1>
+
+//       {/* FORM TAMBAH GURU */}
+//       <div className="bg-white p-6 rounded-xl shadow max-w-md">
+//         <h2 className="text-xl font-semibold mb-4">Tambah Guru Baru</h2>
+
+//         <form onSubmit={handleSubmit} className="space-y-3">
+//           <input
+//             className="border p-2 rounded w-full"
+//             placeholder="Nama Guru"
+//             value={form.nama}
+//             onChange={(e) => setForm({ ...form, nama: e.target.value })}
+//           />
+
+//           <input
+//             className="border p-2 rounded w-full"
+//             placeholder="Email Guru"
+//             value={form.email}
+//             onChange={(e) => setForm({ ...form, email: e.target.value })}
+//           />
+
+//           <input
+//             className="border p-2 rounded w-full"
+//             placeholder="Password Guru"
+//             value={form.password}
+//             onChange={(e) => setForm({ ...form, password: e.target.value })}
+//           />
+
+//           <input
+//             className="border p-2 rounded w-full"
+//             placeholder="NIP Guru"
+//             value={form.nip}
+//             onChange={(e) => setForm({ ...form, nip: e.target.value })}
+//           />
+
+//           <button className="bg-blue-600 text-white py-2 px-4 rounded w-full">
+//             Tambah Guru
+//           </button>
+//         </form>
+
+//         {msg && <p className="mt-3 text-green-600">{msg}</p>}
+//       </div>
+
+//       {/* TABEL USERS */}
+//       <div className="bg-white p-6 rounded-xl shadow">
+//         <h2 className="text-xl font-semibold mb-4">Daftar Semua User</h2>
+
+//         <table className="w-full border">
+//           <thead>
+//             <tr className="bg-gray-100">
+//               <th className="border p-2">ID</th>
+//               <th className="border p-2">Email</th>
+//               <th className="border p-2">Role</th>
+//               <th className="border p-2">Aksi</th>
+//             </tr>
+//           </thead>
+
+//           <tbody>
+//             {users.map((u) => (
+//               <tr key={u.id}>
+//                 <td className="border p-2">{u.id}</td>
+//                 <td className="border p-2">{u.email}</td>
+//                 <td className="border p-2">{u.role}</td>
+//                 <td className="border p-2 text-center">
+//                   <button
+//                     className="bg-red-600 text-white px-3 py-1 rounded"
+//                     onClick={() => deleteUser(u.id)}
+//                   >
+//                     Hapus
+//                   </button>
+//                 </td>
+//               </tr>
+//             ))}
+//           </tbody>
+
+//         </table>
+//       </div>
+//     </div>
+//   );
+// }
+
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -13,7 +162,6 @@ export default function AdminDashboard() {
 
   const [msg, setMsg] = useState("");
 
-  // Ambil semua user
   async function loadUsers() {
     const res = await fetch("/api/admin/get-users");
     const data = await res.json();
@@ -24,7 +172,6 @@ export default function AdminDashboard() {
     loadUsers();
   }, []);
 
-  // Tambah guru
   async function handleSubmit(e) {
     e.preventDefault();
     setMsg("");
@@ -46,7 +193,6 @@ export default function AdminDashboard() {
     }
   }
 
-  // Hapus user
   async function deleteUser(id) {
     if (!confirm("Yakin mau hapus akun ini?")) return;
 
@@ -62,86 +208,154 @@ export default function AdminDashboard() {
     }
   }
 
+  // Logout function (bisa diarahkan ke login atau hapus session)
+  const handleLogout = () => {
+    // Ganti sesuai cara logout kamu (misal: localStorage, cookies, dll)
+    if (confirm("Yakin ingin logout?")) {
+      window.location.href = "/login"; // atau "/api/auth/logout"
+    }
+  };
+
   return (
-    <div className="p-10 space-y-10">
-
-      <h1 className="text-3xl font-bold">Dashboard Admin</h1>
-
-      {/* FORM TAMBAH GURU */}
-      <div className="bg-white p-6 rounded-xl shadow max-w-md">
-        <h2 className="text-xl font-semibold mb-4">Tambah Guru Baru</h2>
-
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <input
-            className="border p-2 rounded w-full"
-            placeholder="Nama Guru"
-            value={form.nama}
-            onChange={(e) => setForm({ ...form, nama: e.target.value })}
-          />
-
-          <input
-            className="border p-2 rounded w-full"
-            placeholder="Email Guru"
-            value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
-          />
-
-          <input
-            className="border p-2 rounded w-full"
-            placeholder="Password Guru"
-            value={form.password}
-            onChange={(e) => setForm({ ...form, password: e.target.value })}
-          />
-
-          <input
-            className="border p-2 rounded w-full"
-            placeholder="NIP Guru"
-            value={form.nip}
-            onChange={(e) => setForm({ ...form, nip: e.target.value })}
-          />
-
-          <button className="bg-blue-600 text-white py-2 px-4 rounded w-full">
-            Tambah Guru
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      {/* NAVBAR */}
+      <nav className="bg-gradient-to-r from-[#5B7DB1] to-[#3A5D8A] text-white shadow-lg">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+          <h1 className="text-2xl font-bold tracking-wide">BKcTB - Dashboard Admin</h1>
+          <button
+            onClick={handleLogout}
+            className="bg-white text-[#3A5D8A] px-5 py-2 rounded-lg font-semibold hover:bg-gray-200 transition shadow-md"
+          >
+            Logout
           </button>
-        </form>
+        </div>
+      </nav>
 
-        {msg && <p className="mt-3 text-green-600">{msg}</p>}
-      </div>
+      {/* MAIN CONTENT */}
+      <main className="flex-1 container max-w-7xl mx-auto px-6 py-12">
+        {/* Selamat Datang */}
+        <div className="mb-10">
+          <h2 className="text-4xl font-extrabold text-gray-800">
+            Selamat Datang, <span className="text-[#5B7DB1]">Admin</span> 
+          </h2>
+          <p className="text-gray-600 mt-2">Mari kelola website ini dengan baikk.</p>
+        </div>
 
-      {/* TABEL USERS */}
-      <div className="bg-white p-6 rounded-xl shadow">
-        <h2 className="text-xl font-semibold mb-4">Daftar Semua User</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* FORM TAMBAH GURU */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+              <h3 className="text-2xl font-bold text-gray-800 mb-6">Tambah Guru Baru</h3>
 
-        <table className="w-full border">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="border p-2">ID</th>
-              <th className="border p-2">Email</th>
-              <th className="border p-2">Role</th>
-              <th className="border p-2">Aksi</th>
-            </tr>
-          </thead>
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <input
+                  type="text"
+                  placeholder="Nama Guru"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5B7DB1] focus:border-transparent transition"
+                  value={form.nama}
+                  onChange={(e) => setForm({ ...form, nama: e.target.value })}
+                  required
+                />
+                <input
+                  type="email"
+                  placeholder="Email Guru"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5B7DB1] focus:border-transparent transition"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  required
+                />
+                <input
+                  type="password"
+                  placeholder="Password Guru"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5B7DB1] focus:border-transparent transition"
+                  value={form.password}
+                  onChange={(e) => setForm({ ...form, password: e.target.value })}
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="NIP Guru"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5B7DB1] focus:border-transparent transition"
+                  value={form.nip}
+                  onChange={(e) => setForm({ ...form, nip: e.target.value })}
+                  required
+                />
 
-          <tbody>
-            {users.map((u) => (
-              <tr key={u.id}>
-                <td className="border p-2">{u.id}</td>
-                <td className="border p-2">{u.email}</td>
-                <td className="border p-2">{u.role}</td>
-                <td className="border p-2 text-center">
-                  <button
-                    className="bg-red-600 text-white px-3 py-1 rounded"
-                    onClick={() => deleteUser(u.id)}
-                  >
-                    Hapus
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
+                <button className="w-full bg-gradient-to-r from-[#5B7DB1] to-[#3A5D8A] text-white py-3 rounded-lg font-bold text-lg hover:shadow-xl transform hover:scale-[1.02] transition">
+                  Tambah Guru
+                </button>
+              </form>
 
-        </table>
-      </div>
+              {msg && (
+                <div className={`mt-5 p-4 rounded-lg text-center font-medium ${msg.includes("berhasil") ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+                  {msg}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* TABEL USER */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+              <div className="bg-gradient-to-r from-[#5B7DB1] to-[#3A5D8A] text-white px-8 py-5">
+                <h3 className="text-2xl font-bold">Daftar Semua User</h3>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="bg-gray-50 text-gray-700 font-semibold">
+                      <th className="px-6 py-4 text-left">ID</th>
+                      <th className="px-6 py-4 text-left">Email</th>
+                      <th className="px-6 py-4 text-left">Role</th>
+                      <th className="px-6 py-4 text-center">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {users.length === 0 ? (
+                      <tr>
+                        <td colSpan="4" className="text-center py-10 text-gray-500">
+                          Belum ada user terdaftar
+                        </td>
+                      </tr>
+                    ) : (
+                      users.map((u) => (
+                        <tr key={u.id} className="hover:bg-gray-50 transition">
+                          <td className="px-6 py-4">{u.id}</td>
+                          <td className="px-6 py-4 font-medium">{u.email}</td>
+                          <td className="px-6 py-4">
+                            <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                              u.role === "admin" ? "bg-purple-100 text-purple-800" : "bg-blue-100 text-blue-800"
+                            }`}>
+                              {u.role}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 text-center">
+                            <button
+                              onClick={() => deleteUser(u.id)}
+                              className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition font-medium"
+                            >
+                              Hapus
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      {/* FOOTER */}
+      <footer className="bg-gradient-to-r from-[#5B7DB1] to-[#3A5D8A] text-white py-6 mt-auto">
+        <div className="text-center">
+          <p className="font-medium">© 2025 BKcTB | SMK Taruna Bhakti</p>
+          
+        </div>
+      </footer>
     </div>
   );
 }

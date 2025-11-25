@@ -1,6 +1,8 @@
+
 "use client";
+
 import { useEffect, useState } from "react";
-import { Bell, X, Trash2, CheckCircle } from "lucide-react";
+import { Bell, X, Trash2, CheckCircle, LogOut } from "lucide-react";
 
 export default function DashboardGuru() {
   const [userData, setUserData] = useState(null);
@@ -28,12 +30,12 @@ export default function DashboardGuru() {
   useEffect(() => {
     if (userData) {
       fetchPengajuan();
-      const interval = setInterval(fetchPengajuan, 10000);
+      const interval = setInterval(fetchPengajuan, 10000); // refresh tiap 10 detik
       return () => clearInterval(interval);
     }
   }, [userData]);
 
-  // SETUJUI
+  // SETUJUI PENGAJUAN
   const handleSetujui = async (id) => {
     if (!confirm("Yakin SETUJUI pengajuan ini?")) return;
     setLoading(true);
@@ -53,20 +55,20 @@ export default function DashboardGuru() {
     setLoading(false);
   };
 
-  // HAPUS PERMANEN — PAKE TRIK POST BIAR GAMPANG (LU MALES KAN?)
+  // HAPUS PERMANEN
   const handleHapus = async (id) => {
-    if (!confirm("YAKIN HAPUS PERMANEN?\nKalo udah dihapus jangan nyesel yaw")) return;
+    if (!confirm("YAKIN HAPUS PERMANEN?\nData akan hilang selamanya!")) return;
 
     try {
       const res = await fetch(`/api/pengajuan/${id}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ hapus: true }), // KUNCI INI!
+        body: JSON.stringify({ hapus: true }),
       });
 
       if (res.ok) {
         await fetchPengajuan();
-        alert("Pengajuan berhasil DIHAPUS dari database!");
+        alert("Pengajuan berhasil dihapus!");
       } else {
         const err = await res.text();
         alert("Gagal hapus: " + err);
@@ -87,10 +89,11 @@ export default function DashboardGuru() {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 text-gray-800 p-6">
-      {/* Navbar */}
-      <nav className="bg-gradient-to-r from-[#5B7DB1] to-[#3a5d8a] text-white px-8 py-3 rounded-3xl shadow-2xl flex justify-between items-center mb-10">
+      {/* NAVBAR */}
+      <nav className="bg-gradient-to-r from-[#5B7DB1] to-[#3a5d8a] text-white px-8 py-4 rounded-3xl shadow-2xl flex justify-between items-center mb-12">
         <h1 className="text-2xl font-bold tracking-wider">BKcTB - Dashboard Guru</h1>
         <div className="flex items-center gap-6">
+          {/* Notifikasi */}
           <button onClick={() => setShowNotif(true)} className="relative p-3 bg-white/20 rounded-full hover:bg-white/30 transition">
             <Bell size={28} />
             {notifCount > 0 && (
@@ -99,8 +102,18 @@ export default function DashboardGuru() {
               </span>
             )}
           </button>
-          <button onClick={() => { localStorage.clear(); window.location.href = "/login"; }}
-            className="bg-white text-[#5B7DB1] px-5 py-3 rounded-xl font-bold hover:bg-gray-100 transition shadow-lg">
+
+          {/* LOGOUT DENGAN KONFIRMASI */}
+          <button
+            onClick={() => {
+              if (window.confirm("Yakin ingin logout dari akun guru?")) {
+                localStorage.removeItem("user");
+                window.location.href = "/login";
+              }
+            }}
+            className="flex items-center gap-3 bg-white text-[#5B7DB1] px-6 py-3 rounded-xl font-bold hover:bg-gray-100 transition shadow-lg"
+          >
+            <LogOut size={20} />
             Logout
           </button>
         </div>
@@ -166,7 +179,7 @@ export default function DashboardGuru() {
                     className="bg-red-600 hover:bg-red-700 text-white font-bold px-8 py-4 rounded-2xl shadow-lg flex items-center gap-3 transition"
                   >
                     <Trash2 size={24} />
-                    
+                    HAPUS
                   </button>
                 </div>
               </div>
@@ -178,7 +191,7 @@ export default function DashboardGuru() {
       {/* Modal Notifikasi */}
       {showNotif && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6">
-          <div className="bg-white rounded-2xl shadow-1xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
             <div className="p-8">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-2xl font-bold text-[#2C3E50]">Notifikasi Pengajuan Baru</h3>

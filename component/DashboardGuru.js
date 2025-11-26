@@ -57,7 +57,7 @@ export default function DashboardGuru() {
 
   // HAPUS PERMANEN
   const handleHapus = async (id) => {
-    if (!confirm("YAKIN HAPUS PERMANEN?\nData akan hilang selamanya!")) return;
+    if (!confirm("YAKIN NI MAU HAPUS PERMANEN?\nData akan hilang selamanya loh!")) return;
 
     try {
       const res = await fetch(`/api/pengajuan/${id}`, {
@@ -91,7 +91,10 @@ export default function DashboardGuru() {
     <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 text-gray-800 p-6">
       {/* NAVBAR */}
       <nav className="bg-gradient-to-r from-[#5B7DB1] to-[#3a5d8a] text-white px-8 py-4 rounded-3xl shadow-2xl flex justify-between items-center mb-12">
-        <h1 className="text-2xl font-bold tracking-wider">BKcTB - Dashboard Guru</h1>
+        <h1 className="text-2xl font-bold tracking-wide relative group cursor-pointer">
+      BKcTB - Dashboard Guru
+      <span className="absolute -bottom-1 left-0 w-0 h-1 bg-white rounded-full transition-all duration-300 group-hover:w-full"></span>
+    </h1>
         <div className="flex items-center gap-6">
           {/* Notifikasi */}
           <button onClick={() => setShowNotif(true)} className="relative p-3 bg-white/20 rounded-full hover:bg-white/30 transition">
@@ -106,7 +109,7 @@ export default function DashboardGuru() {
           {/* LOGOUT DENGAN KONFIRMASI */}
           <button
             onClick={() => {
-              if (window.confirm("Yakin ingin logout dari akun guru?")) {
+              if (window.confirm("Yakin mau logout ni??")) {
                 localStorage.removeItem("user");
                 window.location.href = "/login";
               }

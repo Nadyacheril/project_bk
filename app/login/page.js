@@ -71,11 +71,27 @@ export default function LoginPage() {
       <div className="absolute top-0 right-0 w-64 h-64 bg-[#8EAAD6] rounded-full translate-x-1/3 -translate-y-1/3"></div>
       <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#8EAAD6] rounded-full -translate-x-1/3 translate-y-1/3"></div>
 
-      {/* logo */}
-      <div className="absolute top-6 left-6 flex items-center gap-2">
-        <Image src="/logo.jpg" alt="BKcTB" width={50} height={50} className="rounded" />
-        <h1 className="text-[#5B7DB1] font-bold text-lg">BKcTB</h1>
-      </div>
+      
+<Link 
+  href="/" 
+  className="absolute top-6 left-6 flex items-center gap-3 group transition-all duration-300"
+>
+  <div className="relative">
+    <Image 
+      src="/logo.jpg" 
+      alt="BKcTB" 
+      width={50} 
+      height={50} 
+      className="rounded-lg shadow-md transition-transform duration-300 group-hover:scale-110 group-hover:shadow-xl"
+    />
+    {/* Efek glow kecil saat hover (opsional, tambah vibe premium) */}
+    <div className="absolute inset-0 rounded-lg bg-[#5B7DB1] opacity-0 group-hover:opacity-30 blur-xl transition-opacity duration-300"></div>
+  </div>
+
+  <h1 className="text-[#5B7DB1] font-bold text-2xl tracking-tight opacity-90 group-hover:opacity-100 transition-all duration-300">
+    BKcTB
+  </h1>
+</Link>
    
     
       {/* form */}

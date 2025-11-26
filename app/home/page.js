@@ -113,9 +113,10 @@ export default function SiswaDashboard() {
       {/* NAVBAR */}
       <nav className="bg-[#5B7DB1] text-white shadow-lg">
         <div className="max-w-7xl mx-auto px-8 py-5 flex justify-between items-center rounded-b-3xl">
-          <h1 className="text-3xl font-bold tracking-wider">
-            BKcTB - Siswa
-          </h1>
+           <h1 className="text-3xl font-bold tracking-wide relative group cursor-pointer">
+      BKcTB - Siswa
+      <span className="absolute -bottom-1 left-0 w-0 h-1 bg-white rounded-full transition-all duration-300 group-hover:w-full"></span>
+    </h1>
           <div className="flex items-center gap-4">
            
             <button
@@ -133,7 +134,7 @@ export default function SiswaDashboard() {
     {/* SELAMAT DATANG - PERSIS KAYAK FOTO KAMU */}
 <section className="text-center mt-20 px-6">
   <h1 className="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#5B7DB1] to-[#3A5D8A]">
-    Selamat Datang
+    Selamat Datang 
   </h1>
   <p className="text-3xl md:text-4xl font-bold text-[#2C3E50] mt-6 tracking-wide">
     {userData.nama 

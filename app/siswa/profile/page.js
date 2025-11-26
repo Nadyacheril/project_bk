@@ -122,7 +122,17 @@ export default function ProfileSiswa() {
       {/* NAVBAR */}
       <nav className="bg-[#5B7DB1] text-white shadow-lg">
         <div className="max-w-7xl mx-auto px-8 py-5 flex justify-between items-center">
-          <h1 className="text-2xl font-bold">BKcTB - Profil</h1>
+         <h1 
+        className="text-3xl font-bold relative inline-block cursor-pointer 
+             after:content-[''] after:absolute after:left-0 after:bottom-[-8px] 
+             after:w-0 after:h-1 after:bg-white after:rounded-full 
+             after:transition-all after:duration-500 after:ease-out
+             hover:after:w-full hover:text-white/90 
+             transition-all duration-300 group"
+      >
+          BKcTB - Profil
+      <span className="absolute -inset-1 bg-white/20 rounded-lg blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></span>
+    </h1>
           <div className="flex items-center gap-4">
             <div className="relative">
               <button onClick={() => setShowNotif(!showNotif)} className="p-3 bg-white/20 rounded-full hover:bg-white/30 relative">

@@ -134,39 +134,61 @@ export default function ProfileSiswa() {
       <span className="absolute -inset-1 bg-white/20 rounded-lg blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></span>
     </h1>
           <div className="flex items-center gap-4">
-            <div className="relative">
-              <button onClick={() => setShowNotif(!showNotif)} className="p-3 bg-white/20 rounded-full hover:bg-white/30 relative">
-                <Bell size={22} />
-                {notifications.length > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center animate-pulse">
-                    {notifications.length}
-                  </span>
-                )}
+<div className="relative">
+  <button 
+    onClick={() => setShowNotif(!showNotif)} 
+    className="p-3 bg-white/20 rounded-full hover:bg-white/30 relative transition"
+  >
+    <Bell size={22} />
+    {notifications.length > 0 && (
+      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center animate-pulse font-bold">
+        {notifications.length}
+      </span>
+    )}
+  </button>
+
+  {/* DROPDOWN NOTIFIKASI - INI YANG DIUBAH */}
+  {showNotif && (
+    <div className="absolute top-full mt-3 -right-4 sm:right-0 w-screen max-w-sm sm:max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden z-50">
+      {/* Panah kecil biar cantik (optional) */}
+      <div className="absolute top-0 right-6 sm:right-10 -translate-y-full">
+        <div className="w-0 h-0 border-l-8 border-r-8 border-b-8 border-transparent border-b-white"></div>
+      </div>
+
+      <div className="bg-[#5B7DB1] text-white p-4 font-bold flex justify-between items-center">
+        <span>Notifikasi</span>
+        {notifications.length > 0 && (
+          <button onClick={tandaiSemuaDibaca} className="text-sm underline hover:text-white/80">
+            Tandai semua dibaca
+          </button>
+        )}
+      </div>
+
+      <div className="max-h-96 overflow-y-auto">
+        {notifications.length === 0 ? (
+          <p className="p-6 text-center text-gray-500">Tidak ada notifikasi baru</p>
+        ) : (
+          notifications.map(n => (
+            <div key={n.id} className="p-4 border-b hover:bg-gray-50 flex justify-between items-start gap-3">
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold truncate">Pengajuan {n.topik}</p>
+                <p className="text-sm text-gray-600">
+                  Status: <span className={n.status === "Disetujui" ? "text-green-600 font-bold" : "text-red-600 font-bold"}>{n.status}</span>
+                </p>
+              </div>
+              <button 
+                onClick={() => hapusPengajuan(n.id)} 
+                className="text-red-500 hover:text-red-700 flex-shrink-0"
+              >
+                <X size={18} />
               </button>
-              {showNotif && (
-                <div className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-2xl overflow-hidden">
-                  <div className="bg-[#5B7DB1] text-white p-4 font-bold flex justify-between items-center">
-                    <span>Notifikasi</span>
-                    {notifications.length > 0 && <button onClick={tandaiSemuaDibaca} className="text-sm underline">Tandai semua dibaca</button>}
-                  </div>
-                  <div className="max-h-96 overflow-y-auto">
-                    {notifications.length === 0 ? (
-                      <p className="p-6 text-center text-gray-500">Tidak ada notifikasi baru</p>
-                    ) : (
-                      notifications.map(n => (
-                        <div key={n.id} className="p-4 border-b hover:bg-gray-50 flex justify-between items-start">
-                          <div>
-                            <p className="font-semibold">Pengajuan {n.topik}</p>
-                            <p className="text-sm text-gray-600">Status: <span className={n.status === "Disetujui" ? "text-green-600 font-bold" : "text-red-600 font-bold"}>{n.status}</span></p>
-                          </div>
-                          <button onClick={() => hapusPengajuan(n.id)} className="text-red-500 hover:text-red-700"><X size={18} /></button>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </div>
-              )}
             </div>
+          ))
+        )}
+      </div>
+    </div>
+  )}
+</div>
             <button onClick={() => confirm("Yakin logout?") && (localStorage.removeItem("user"), window.location.href = "/login")}
               className="flex items-center gap-2 bg-white text-[#5B7DB1] px-6 py-3 rounded-full font-bold hover:scale-105 transition">
               <LogOut size={18} /> Logout

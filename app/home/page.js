@@ -130,11 +130,10 @@ export default function SiswaDashboard() {
         </div>
       </nav>
 
-      {/* SELAMAT DATANG */}
-    {/* SELAMAT DATANG - PERSIS KAYAK FOTO KAMU */}
+
 <section className="text-center mt-20 px-6">
   <h1 className="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#5B7DB1] to-[#3A5D8A]">
-    Selamat Datang 
+    Selamat Datang ؛༊
   </h1>
   <p className="text-3xl md:text-4xl font-bold text-[#2C3E50] mt-6 tracking-wide">
     {userData.nama 

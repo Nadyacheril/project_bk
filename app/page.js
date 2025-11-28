@@ -12,7 +12,7 @@ export default function MainPage({ user }) {
     { id: 1, nama: "Kasandra Fitriani.N S.Pd", foto: "/guru/bucaca.jpg", pengalaman: "10 tahun", quote: "Manusia tidak rusak, hanya terkadang tersesat. BK membantu menemukan arah pulang." },
     { id: 2, nama: "Heni Siswati S.Psi", foto: "/guru/buheni.jpg", pengalaman: "8 tahun", quote: "Setiap luka punya bahasa. BK membantu menerjemahkannya." },
     { id: 3, nama: "Ika Rafika S.Pd", foto: "/guru/bufika.jpg", pengalaman: "5 tahun", quote: "BK bukan sekadar bantuan; ia adalah jembatan menuju versi dirimu yang lebih kuat." },
-    { id: 4, nama: "Nadya Afriliani Ariesta S.Pd", foto: "/guru/bunadia.jpg", pengalaman: "12 tahun", quote: "Keberanian dimulai dari berani cerita." },
+    { id: 4, nama: "Nadya Afriliani Ariesta S.Pd", foto: "/guru/bunadia.jpg", pengalaman: "5 tahun", quote: "Keberanian dimulai dari berani cerita." },
   ];
 
   const [selectedGuru, setSelectedGuru] = useState(null);
@@ -71,7 +71,8 @@ export default function MainPage({ user }) {
             Tempat yang aman untuk bertumbuh dan berbagi.
           </h2>
           <p className="text-sm md:text-base mb-8">
-            Kami ada untuk memberikan solusi dan mendengarkan keluh kesah siswa/i.
+            Kami ada untuk memberikan solusi, mendengarkan keluh kesah siawa/i.
+            Karna setiap siswa/i berhak untuk didengar dan dipahami
           </p>
           {!user && (
             <button onClick={() => router.push("/login")} className="bg-white text-[#395E9D] font-bold px-12 py-4 rounded-full shadow-xl hover:scale-110 transition text-lg">

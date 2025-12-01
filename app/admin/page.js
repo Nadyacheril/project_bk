@@ -75,7 +75,7 @@ export default function AdminDashboard() {
   <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
     {/* Judul dengan underline animasi saat hover */}
     <h1 className="text-3xl font-bold tracking-wide relative group cursor-pointer">
-      BKcTB - Dashboard Admin
+      BKcTB - Admin
       <span className="absolute -bottom-1 left-0 w-0 h-1 bg-white rounded-full transition-all duration-300 group-hover:w-full"></span>
     </h1>
 

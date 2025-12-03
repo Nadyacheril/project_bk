@@ -164,7 +164,7 @@ export default function SiswaDashboard() {
             >
               <div className="relative w-40 h-40 mx-auto rounded-full overflow-hidden border-8 border-white shadow-2xl ring-4 ring-transparent group-hover:ring-[#5B7DB1]/30">
                 <Image
-                  src={guru.foto || "/default-avatar.png"}
+                  src={`/img${guru.foto}`}
                   alt={guru.nama}
                   width={160}
                   height={160}

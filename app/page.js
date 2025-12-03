@@ -209,7 +209,7 @@ export default function MainPage({ user }) {
             {guruList.map((guru, i) => (
               <motion.div key={guru.id} initial={{ opacity: 0, y: 60 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: i * 0.15 }} whileHover={{ y: -12, scale: 1.05 }} className="text-center cursor-pointer group" onClick={() => handleOpenModal(guru)}>
                 <div className="mx-auto w-40 h-40 rounded-2xl overflow-hidden shadow-xl mb-4">
-                  <Image src={guru.foto} width={160} height={160} alt={guru.nama} className="object-cover group-hover:scale-110 transition" />
+                  <Image src={`img${guru.foto}`} width={160} height={160} alt={guru.nama} className="object-cover group-hover:scale-110 transition" />
                 </div>
                 <h3 className="font-bold text-[#395E9D]">{guru.nama.split(" ").slice(0,2).join(" ")}</h3>
                 <p className="text-sm text-gray-600">Pengalaman {guru.pengalaman}</p>

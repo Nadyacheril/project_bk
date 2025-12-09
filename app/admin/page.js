@@ -3,28 +3,28 @@
 import { useEffect, useState } from "react";
 import { LogOut } from "lucide-react";
 
-export default function AdminDashboard() {
-  const [users, setUsers] = useState([]);
-  const [form, setForm] = useState({
+export default function AdminDashboard() { //komponen utama dashboard admin
+  const [users, setUsers] = useState([]); // ini buat nampung data user
+  const [form, setForm] = useState({ // ini buat tambah guru
     nama: "",
     email: "",
     password: "",
     nip: "",
   });
 
-  const [msg, setMsg] = useState("");
+  const [msg, setMsg] = useState(""); //ini buat pesan sukses/gagal
 
-  async function loadUsers() {
-    const res = await fetch("/api/admin/get-users");
+  async function loadUsers() { //fungsi ambil data user
+    const res = await fetch("/api/admin/get-users"); 
     const data = await res.json();
     setUsers(data.users);
   }
 
-  useEffect(() => {
+  useEffect(() => { // load data user pas komponen mount
     loadUsers();
   }, []);
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e) { //fungsi submit form tambah guru
     e.preventDefault();
     setMsg("");
 
@@ -45,7 +45,7 @@ export default function AdminDashboard() {
     }
   }
 
-  async function deleteUser(id) {
+  async function deleteUser(id) { //fungsi hapus user
     if (!confirm("Yakin mau hapus akun ini?")) return;
 
     const res = await fetch("/api/admin/delete-user", {
@@ -79,8 +79,9 @@ export default function AdminDashboard() {
       <span className="absolute -bottom-1 left-0 w-0 h-1 bg-white rounded-full transition-all duration-300 group-hover:w-full"></span>
     </h1>
 
-    {/* Tombol Logout dengan Icon yang estetik */}
-      <button onClick={() => confirm("Yakin logout?") && (localStorage.removeItem("user"), window.location.href = "/login")}
+    
+          <button onClick={() => confirm("Yakin logout?") && (localStorage.removeItem("user"),
+            window.location.href = "/login")} // ini buat logout admin di navbar
               className="flex items-center gap-2 bg-white text-[#5B7DB1] px-6 py-3 rounded-full font-bold hover:scale-105 transition">
               <LogOut size={18} /> Logout
             </button>
@@ -144,18 +145,18 @@ export default function AdminDashboard() {
 
               {msg && (
                 <div className={`mt-5 p-4 rounded-lg text-center font-medium ${msg.includes("berhasil") ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
-                  {msg}
+                  {msg} 
                 </div>
               )}
             </div>
           </div>
 
           {/* TABEL USER */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2"> 
             <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
               <div className="bg-gradient-to-r from-[#5B7DB1] to-[#3A5D8A] text-white px-8 py-5">
                 <h3 className="text-2xl font-bold">Daftar Semua User</h3>
-              </div>
+              </div> {/* */}
 
               <div className="overflow-x-auto">
                 <table className="w-full">
@@ -181,7 +182,7 @@ export default function AdminDashboard() {
                           <td className="px-6 py-4 font-medium">{u.email}</td>
                           <td className="px-6 py-4">
                             <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                              u.role === "admin" ? "bg-purple-100 text-purple-800" : "bg-blue-100 text-blue-800"
+                              u.role === "admin" ? "bg-yellow-100 text-yellow-800" : "bg-pink-100 text-pink-800"  
                             }`}>
                               {u.role}
                             </span>

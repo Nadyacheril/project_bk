@@ -1,4 +1,4 @@
-"use client"; // penting untuk menggunakan hook di provider
+"use client"; 
 
 import { createContext, useContext, useState, useEffect } from "react";
 

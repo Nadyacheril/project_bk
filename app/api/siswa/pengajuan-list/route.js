@@ -11,8 +11,8 @@ export async function POST(req) {
       JOIN siswa s ON p.id_siswa = s.id 
       JOIN guru g ON p.id_guru = g.id 
       WHERE s.user_id = ? 
-      ORDER BY p.created_at DESC
-    `, [userId]);
+      ORDER BY p.created_at DESC 
+    `, [userId]); //mengambil semua data yg ada di dlm pengajuan dan urutan terbaru 
 
     return NextResponse.json({ success: true, pengajuan: rows[0] });
   } catch (error) {

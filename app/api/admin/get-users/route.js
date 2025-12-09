@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { query } from "@/lib/database";
 
+//kode ini agar admin bisa melihat semua data user yang terdaftar
+
 export async function GET() {
   const users = await query("SELECT id, email, role FROM users ORDER BY id ASC");
 

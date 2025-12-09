@@ -8,7 +8,7 @@ export async function PATCH(req) {
 
     await connection.execute(
       "UPDATE pengajuan SET notif_dibaca = 1 WHERE id = ?",
-      [id]
+      [id] //update di sql 
     );
 
     return NextResponse.json({ success: true });
@@ -17,3 +17,4 @@ export async function PATCH(req) {
     return NextResponse.json({ error: "Gagal update notif" }, { status: 500 });
   }
 }
+//menandai notifikasi sudah dibaca siswa "tandai sudah di baca"

@@ -1,52 +1,3 @@
-// app/api/pengajuan/[id]/route.js
-// import { NextResponse } from "next/server";
-// import connection from "@/lib/database";
-
-// export async function PATCH(req, { params }) {
-//   try {
-//     const { id } = params;
-//     const body = await req.json();
-//     const { status, alasan } = body; // status: "Disetujui" atau "Ditolak"
-
-//     if (!["Disetujui", "Ditolak"].includes(status)) {
-//       return NextResponse.json({ error: "Status tidak valid" }, { status: 400 });
-//     }
-
-//     await connection.execute(
-//       "UPDATE pengajuan SET status = ?, alasan = ?, notif_dibaca = 0 WHERE id = ?",
-//       [status, alasan || null, id]
-//     );
-
-//     return NextResponse.json({ success: true });
-//   } catch (err) {
-//     console.error(err);
-//     return NextResponse.json({ error: "Gagal update" }, { status: 500 });
-//   }
-// }
-
-// import { NextResponse } from "next/server";
-// import connection from "@/lib/database";
-
-// export async function PATCH(req, { params }) {
-//   try {
-//     const { id } = params; // ambil id dari URL
-//     const { status, alasan } = await req.json();
-
-//     if (!["Disetujui", "Ditolak"].includes(status)) {
-//       return NextResponse.json({ error: "Status tidak valid" }, { status: 400 });
-//     }
-
-//     await connection.execute(
-//       "UPDATE pengajuan SET status = ?, alasan = ?, notif_dibaca = 0 WHERE id = ?",
-//       [status, alasan || null, id]
-//     );
-
-//     return NextResponse.json({ success: true });
-//   } catch (err) {
-//     console.error(err);
-//     return NextResponse.json({ error: "Gagal update" }, { status: 500 });
-//   }
-// }
 
 import { NextResponse } from "next/server";
 import connection from "@/lib/database";
@@ -54,15 +5,15 @@ import connection from "@/lib/database";
 export async function PATCH(req, { params }) {
   try {
     const { id } = params;
-    const { status, alasan } = await req.json();
+    const { status} = await req.json();
 
     if (!["Menunggu", "Disetujui", "Ditolak"].includes(status)) {
       return NextResponse.json({ error: "Status tidak valid" }, { status: 400 });
     }
 
     await connection.execute(
-      "UPDATE pengajuan SET status = ?, alasan = ?, notif_dibaca = 0 WHERE id = ?",
-      [status, alasan || null, id]
+      "UPDATE pengajuan SET status = ?, notif_dibaca = 0 WHERE id = ?",
+      [status|| null, id]
     );
 
     return NextResponse.json({ success: true });

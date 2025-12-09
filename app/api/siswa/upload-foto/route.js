@@ -25,9 +25,8 @@ export async function POST(request) {
       return NextResponse.json({ success: false, error: "File harus gambar!" });
     }
 
-    // AUTO BUAT FOLDER KALAU BELUM ADA
     const uploadDir = path.join(process.cwd(), "public", "siswa");
-    await mkdir(uploadDir, { recursive: true }); // ini kuncinya!
+    await mkdir(uploadDir, { recursive: true }); 
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
@@ -48,3 +47,5 @@ export async function POST(request) {
     return NextResponse.json({ success: false, error: "Gagal upload foto" });
   }
 }
+
+//Mengizinkan siswa mengganti foto profilnya sendiri langsung dari browser (tanpa perlu admin).

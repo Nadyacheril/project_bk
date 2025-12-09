@@ -12,7 +12,7 @@ const handler = NextAuth({
       name: "Credentials",
 
       async authorize(credentials) {
-        const { email, password } = credentials;
+        const { email, password } = credentials; //berisi email dan password dri login form
 
         const [rows] = await connection.execute(
           "SELECT * FROM users WHERE email = ?",
@@ -34,14 +34,14 @@ const handler = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user }) { // jwt token membuktikan klo km udh login , token mengatur session role
       if (user) {
         token.role = user.role;
       }
       return token;
     },
 
-    async session({ session, token }) {
+    async session({ session, token }) { 
       session.user.role = token.role;
       return session;
     },

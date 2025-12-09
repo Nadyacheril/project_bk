@@ -31,3 +31,6 @@ export async function POST(req) {
     return NextResponse.json({ error: "Gagal mengirim" }, { status: 500 });
   }
 }
+
+
+//ini buat di kirim ke database

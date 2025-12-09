@@ -12,7 +12,7 @@ export default function ProfileSiswa() {
   const [quotes, setQuotes] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [pengajuanList, setPengajuanList] = useState([]);
+  const [pengajuanList, setPengajuanList] = useState([]); //riwayat pengajuan
   const [notifications, setNotifications] = useState([]);
   const [showNotif, setShowNotif] = useState(false);
   const fileInputRef = useRef(null);

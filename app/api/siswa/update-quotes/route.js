@@ -1,4 +1,4 @@
-// app/api/siswa/update-quotes/route.js
+
 import { NextResponse } from "next/server";
 import mysql from "mysql2/promise";
 
@@ -11,13 +11,14 @@ const pool = mysql.createPool({
 
 export async function POST(request) {
   try {
-    const { userId, quotes } = await request.json();  // INI BOLEH json()
+    const { userId, quotes } = await request.json();  
 
     if (!userId) {
       return NextResponse.json({ success: false, error: "userId required" });
     }
 
-    await pool.execute("UPDATE siswa SET quotes = ? WHERE user_id = ?", [quotes || null, userId]);
+    await pool.execute("UPDATE siswa SET quotes = ? WHERE user_id = ?",
+      [quotes || null, userId]);  
 
     return NextResponse.json({ success: true });
 

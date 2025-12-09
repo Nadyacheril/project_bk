@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import connection from "../../../lib/database";
-
 import { registerSchema } from "@/lib/zodSchemas";
 
 export async function POST(req) {
@@ -24,7 +23,8 @@ export async function POST(req) {
       [email]
     );
     if (existing.length > 0) {
-      return NextResponse.json({ error: "Email sudah terdaftar" }, { status: 400 });
+      return NextResponse.json({ error: "Email sudah terdaftar" },
+        { status: 400 });
     }
 
     // HASH PASSWORD

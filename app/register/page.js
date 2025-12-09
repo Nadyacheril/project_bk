@@ -34,7 +34,7 @@ export default function RegisterPage() {
     if (!validation.success) {
       alert(validation.error.errors[0].message);
       setLoading(false);
-      return;
+      return;    //ini validasi nya 
     }
 
     // Lolos validasi, lanjut register

@@ -7,6 +7,7 @@ export async function DELETE(req) {
   try {
     // hapus user (CASCADE akan hapus guru/siswa otomatis)
     await query("DELETE FROM users WHERE id = ?", [id]);
+    //meghapus user berdasarkan id
 
     return NextResponse.json({ success: true });
   } catch (err) {

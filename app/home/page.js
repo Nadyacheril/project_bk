@@ -8,7 +8,7 @@ import Image from "next/image";
 import { X, Bell, LogOut } from "lucide-react";
 
 export default function SiswaDashboard() {
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState(null); // Menyimpan data user yg login 
   const [guruList, setGuruList] = useState([]);
   const [selectedGuru, setSelectedGuru] = useState(null);
   const [showForm, setShowForm] = useState(false);
@@ -18,7 +18,7 @@ export default function SiswaDashboard() {
   const [tanggal, setTanggal] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Cek login
+
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (!storedUser) {
@@ -42,7 +42,7 @@ export default function SiswaDashboard() {
     fetchGuru();
   }, []);
 
-  const handleOpenModal = (guru) => {
+  const handleOpenModal = (guru) => { //isi modal pengajuan nya
     setSelectedGuru(guru);
     setShowForm(false);
     setKelas("");
@@ -59,6 +59,7 @@ export default function SiswaDashboard() {
 
     setLoading(true);
     try {
+      //ambil siswaid dri tble profile siswa
       const profileRes = await fetch("/api/siswa/get-id", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -71,7 +72,7 @@ export default function SiswaDashboard() {
         setLoading(false);
         return;
       }
-
+        //kirim pengajuan ke api/pengajuan
       const res = await fetch("/api/pengajuan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -199,29 +200,37 @@ export default function SiswaDashboard() {
               </button>
             ) : (
               <form onSubmit={handlePengajuan} className="space-y-5">
-                <input placeholder="Kelas" value={kelas} onChange={(e) => setKelas(e.target.value)} required className="w-full px-5 py-4 border-2 border-gray-300 rounded-xl focus:border-[#5B7DB1]" />
-                <input type="date" value={tanggal} onChange={(e) => setTanggal(e.target.value)} required className="w-full px-5 py-4 border-2 border-gray-300 rounded-xl focus:border-[#5B7DB1]" />
-                <select value={topik} onChange={(e) => setTopik(e.target.value)} required className="w-full px-5 py-4 border-2 border-gray-300 rounded-xl focus:border-[#5B7DB1]">
+                  <input placeholder="Kelas" value={kelas} onChange={(e) => setKelas(e.target.value)}
+                    required className="w-full px-5 py-4 border-2 text-bold border-gray-300 rounded-xl focus:border-[#456492]" />
+                  <input type="date" value={tanggal} onChange={(e) => setTanggal(e.target.value)}
+                    required className="w-full px-5 py-4 border-2 text-bold border-gray-300 rounded-xl focus:border-[#456492]" />
+                  <select value={topik} onChange={(e) => setTopik(e.target.value)}
+                    required className="w-full px-5 py-4 border-2 text-bold border-gray-300 rounded-xl focus:border-[#456492]">
                   <option value="">Pilih Topik</option>
                   <option>Akademik</option>
                   <option>Pribadi</option>
                   <option>Karir</option>
                   <option>Sosial</option>
                 </select>
-                <select value={jam} onChange={(e) => setJam(e.target.value)} required className="w-full px-5 py-4 border-2 border-gray-300 rounded-xl focus:border-[#5B7DB1]">
+                  <select value={jam} onChange={(e) => setJam(e.target.value)}
+                    required className="w-full px-5 py-4 border-2 text-bold border-gray-300 rounded-xl focus:border-[#456492]">
                   <option value="">Pilih Jam</option>
                   <option>Senin 08:00-09:00</option>
                   <option>Selasa 09:00-10:00</option>
                   <option>Rabu 10:00-11:00</option>
                   <option>Kamis 13:00-14:00</option>
                 </select>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-green-600 text-white py-4 rounded-xl font-bold disabled:opacity-70"
-                >
-                  {loading ? "Mengirim..." : "Kirim Pengajuan"}
-                </button>
+              <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-green-600 text-white py-4 rounded-xl font-bold 
+             hover:bg-green-700 hover:shadow-xl hover:scale-[1.02] 
+             active:scale-95 
+             disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100
+             transition-all duration-200"
+              >
+              {loading ? "Mengirim..." : "Kirim Pengajuan"}
+              </button>
               </form>
             )}
           </div>

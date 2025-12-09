@@ -14,7 +14,7 @@ export async function POST(request) {
     const { userId } = await request.json();
     if (!userId) return NextResponse.json({ success: false, error: "userId required" });
 
-    const [rows] = await pool.execute(
+    const [rows] = await pool.execute( //mengambil data siswa dan user dri sql 
       `SELECT s.id, s.nama, s.kelas, s.foto, s.quotes, u.email 
        FROM siswa s 
        JOIN users u ON s.user_id = u.id 

@@ -1,21 +1,20 @@
-// app/api/pengajuan/[id]/route.js
 import { NextResponse } from "next/server";
 import connection from "@/lib/database";
 
-// PATCH — SETUJUI / TOLAK (udah ada)
+
 export async function PATCH(req, context) {
   try {
     const { id } = await context.params; // WAJIB: await context.params
-    const { status, alasan } = await req.json();
+    const { status } = await req.json();
 
     if (!["Menunggu", "Disetujui", "Ditolak"].includes(status)) {
       return NextResponse.json({ error: "Status tidak valid" }, { status: 400 });
     }
 
     await connection.execute(
-      "UPDATE pengajuan SET status = ?, alasan = ?, notif_dibaca = 0 WHERE id = ?",
-      [status, alasan || null, id]
-    );
+      "UPDATE pengajuan SET status = ?, notif_dibaca = 0 WHERE id = ?",
+      [status || null, id]
+    ); //untuk notif siswa ada perubahan apa ga
 
     return NextResponse.json({ success: true });
   } catch (err) {
@@ -27,7 +26,7 @@ export async function PATCH(req, context) {
 // HAPUS PERMANEN — PAKE POST + await params
 export async function POST(req, context) {
   try {
-    const { id } = await context.params; // INI YANG LU LUPA: await context.params
+    const { id } = await context.params; 
     const body = await req.json();
 
     if (body.hapus) {

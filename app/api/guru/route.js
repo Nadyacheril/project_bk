@@ -4,9 +4,10 @@ import connection from "@/lib/database";
 export async function GET() {
   try {
     const [rows] = await connection.execute("SELECT * FROM guru ORDER BY id ASC");
-    return NextResponse.json({ guru: rows }); // ✅ wajib json
+    return NextResponse.json({ guru: rows }); 
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: "API gagal" }, { status: 500 });
   }
 }
+//ambil semua data guru untuk dropdown home siswa

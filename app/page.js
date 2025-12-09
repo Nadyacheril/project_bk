@@ -165,12 +165,15 @@ export default function MainPage({ user }) {
             <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ delay: 0.6 }} className="text-sm md:text-base mb-8">
               Kami ada untuk memberikan solusi, mendengarkan keluh kesah siswa/i. Karena setiap siswa/i berhak untuk didengar dan dipahami
             </motion.p>
+          {/* 
             {!user && (
               <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }} onClick={() => router.push("/login")}
                 className="bg-white text-[#395E9D] font-bold px-12 py-4 rounded-full shadow-xl hover:scale-110 transition text-lg">
                 Login
               </motion.button>
             )}
+            */}
+
             {user && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="text-lg font-semibold">Halo, {user.name || user.email}</motion.p>}
           </div>
         </motion.section>
@@ -274,7 +277,7 @@ export default function MainPage({ user }) {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4">
             <motion.div initial={{ scale: 0.8 }} animate={{ scale: 1 }} className="bg-white rounded-xl p-6 w-96 relative max-h-screen overflow-y-auto">
               <button onClick={handleCloseModal} className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"><X /></button>
-              <Image src={selectedGuru.foto} width={160} height={160} alt={selectedGuru.nama} className="rounded-lg mx-auto" />
+              {/* <Image src={selectedGuru.foto} width={160} height={160} alt={selectedGuru.nama} className="rounded-lg mx-auto" /> */}
               <h3 className="text-xl font-semibold text-center mt-2">{selectedGuru.nama}</h3>
               <p className="text-center">Pengalaman: {selectedGuru.pengalaman}</p>
               <p className="text-center italic text-gray-700 mt-3">"{selectedGuru.quote}"</p>

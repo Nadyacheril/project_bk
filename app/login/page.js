@@ -70,7 +70,6 @@ export default function LoginPage() {
       
       <div className="absolute top-0 right-0 w-64 h-64 bg-[#8EAAD6] rounded-full translate-x-1/3 -translate-y-1/3"></div>
       <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#8EAAD6] rounded-full -translate-x-1/3 translate-y-1/3"></div>
-
       
 <Link 
   href="/" 
